@@ -1,3 +1,9 @@
+import { SwyftpayClientOption } from "./types";
+
 export class SwyftpayClient {
-  constructor() {}
+  #options: SwyftpayClientOption;
+
+  constructor(options: SwyftpayClientOption) {
+    this.#options = options;
+  }
 }
