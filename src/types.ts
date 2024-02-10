@@ -1,12 +1,211 @@
 import { z } from "zod";
 
-const SwyftpayClientOption = z.object({
+const LogLevel = z.enum(["debug", "info", "warn", "error"]);
+
+export type LogLevel = z.infer<typeof LogLevel>;
+
+const SwervpayClientOption = z.object({
   businessId: z.string(),
   secretKey: z.string(),
   sandbox: z.boolean().default(false),
   timeout: z.number().default(30000),
   version: z.string().default("v1"),
-  baseUrl: z.string().default("https://swyftpay.com/api"),
+  baseUrl: z.string().default("https://app.swervpay.co/"),
+  logLevel: LogLevel.optional(),
 });
 
-export type SwyftpayClientOption = z.infer<typeof SwyftpayClientOption>;
+export type SwervpayClientOption = z.infer<typeof SwervpayClientOption>;
+
+export const CustomerModelSchema = z.object({
+  business_id: z.string(),
+  country: z.string(),
+  created_at: z.coerce.date(),
+  email: z.string(),
+  first_name: z.string(),
+  id: z.string(),
+  is_blacklisted: z.boolean(),
+  last_name: z.string(),
+  middle_name: z.string(),
+  phone_number: z.string(),
+  status: z.string(),
+  updated_at: z.coerce.date(),
+});
+
+export type CustomerModel = z.infer<typeof CustomerModelSchema>;
+
+export const CardModelSchema = z.object({
+  address_city: z.string(),
+  address_country: z.string(),
+  address_postal_code: z.string(),
+  address_state: z.string(),
+  address_street: z.string(),
+  balance: z.number(),
+  business_id: z.string(),
+  card_number: z.string(),
+  created_at: z.coerce.date(),
+  currency: z.string(),
+  customer_id: z.string(),
+  cvv: z.string(),
+  expiry: z.string(),
+  freeze: z.boolean(),
+  id: z.string(),
+  issuer: z.string(),
+  masked_pan: z.string(),
+  name_on_card: z.string(),
+  status: z.string(),
+  total_funded: z.number(),
+  type: z.string(),
+  updated_at: z.coerce.date(),
+});
+
+export type CardModel = z.infer<typeof CardModelSchema>;
+
+export const WalletModelSchema = z.object({
+  account_name: z.string(),
+  account_number: z.string(),
+  account_type: z.string(),
+  address: z.string(),
+  asset_id: z.string(),
+  balance: z.number(),
+  bank_address: z.string(),
+  bank_code: z.string(),
+  bank_name: z.string(),
+  business_id: z.string(),
+  can_received: z.boolean(),
+  can_send: z.boolean(),
+  created_at: z.coerce.date(),
+  customer_id: z.string(),
+  id: z.string(),
+  is_blocked: z.boolean(),
+  label: z.string(),
+  parent_wallet_id: z.string(),
+  pending_balance: z.number(),
+  reference: z.string(),
+  routing_number: z.string(),
+  total_received: z.number(),
+  updated_at: z.coerce.date(),
+});
+export type WalletModel = z.infer<typeof WalletModelSchema>;
+
+export const TransactionModelSchema = z.object({
+  account_name: z.string(),
+  account_number: z.string(),
+  amount: z.number(),
+  asset_id: z.string(),
+  bank_code: z.string(),
+  bank_name: z.string(),
+  business_id: z.string(),
+  category: z.string(),
+  charges: z.number(),
+  created_at: z.coerce.date(),
+  customer_id: z.string(),
+  detail: z.string(),
+  fiat_rate: z.number(),
+  id: z.string(),
+  reference: z.string(),
+  report: z.boolean(),
+  report_message: z.string(),
+  session_id: z.string(),
+  status: z.string(),
+  sub_wallet_id: z.string(),
+  type: z.string(),
+  updated_at: z.coerce.date(),
+  wallet_id: z.string(),
+});
+export type TransactionModel = z.infer<typeof TransactionModelSchema>;
+
+export const BankModelSchema = z.object({
+  bank_code: z.string(),
+  bank_name: z.string(),
+});
+export type BankModel = z.infer<typeof BankModelSchema>;
+
+export const ResolveAccountModelSchema = z.object({
+  account_name: z.string(),
+  account_number: z.string(),
+  bank_code: z.string(),
+  bank_name: z.string(),
+});
+export type ResolveAccountModel = z.infer<typeof ResolveAccountModelSchema>;
+
+export const SuccessResponseSchema = z.object({
+  message: z.string(),
+});
+export type SuccessResponse = z.infer<typeof SuccessResponseSchema>;
+
+export const ErrorResponseSchema = SuccessResponseSchema.extend({
+  values: z.unknown(),
+});
+
+export type ErrorReponse = z.infer<typeof ErrorResponseSchema>;
+
+export const CreateCustomerSchema = z.object({
+  firstname: z.string(),
+  lastname: z.string(),
+  middlename: z.string(),
+  country: z.string(),
+  email: z.string(),
+});
+export type CreateCustomerBody = z.infer<typeof CreateCustomerSchema>;
+
+export const InformationSchema = z.object({
+  address: z.string(),
+  city: z.string(),
+  bvn: z.string(),
+  state: z.string(),
+  country: z.string(),
+  postal_code: z.string(),
+});
+export type Information = z.infer<typeof InformationSchema>;
+
+export const DocumentSchema = z.object({
+  document_type: z.string(),
+  document: z.string(),
+  passport: z.string(),
+  document_number: z.string(),
+});
+export type Document = z.infer<typeof DocumentSchema>;
+
+export const CustomerKycSchema = z.object({
+  tier: z.string(),
+  document: DocumentSchema,
+  information: InformationSchema,
+});
+export type CustomerKycBody = z.infer<typeof CustomerKycSchema>;
+
+export const UpdateCustomerSchema = z.object({
+  phone_number: z.string(),
+  email: z.string(),
+});
+export type UpdateCustomerBody = z.infer<typeof UpdateCustomerSchema>;
+
+export const ResolveAccountSchema = z.object({
+  bank_code: z.string(),
+  account_number: z.string(),
+});
+export type ResolveAccountBody = z.infer<typeof ResolveAccountSchema>;
+
+export const FundOrWithdrawCardSchema = z.object({
+  amount: z.number(),
+});
+export type FundOrWithdrawCardBody = z.infer<typeof FundOrWithdrawCardSchema>;
+
+export const CreateCardSchema = FundOrWithdrawCardSchema.extend({
+  provider: z.string(),
+  customer_id: z.string(),
+});
+export type CreateCardBody = z.infer<typeof CreateCardSchema>;
+
+export const PageAndLimitQuerySchema = z.object({
+  page: z.number().default(1),
+  limit: z.number().default(10),
+});
+export type PageAndLimitQuery = z.infer<typeof PageAndLimitQuerySchema>;
+
+export const BusinessModelSchema = z.object({
+  name: z.string(),
+  id: z.string(),
+  updated_at: z.coerce.date(),
+  created_at: z.coerce.date(),
+});
+export type BusinessModel = z.infer<typeof BusinessModelSchema>;
