@@ -10,7 +10,7 @@ const SwervpayClientOption = z.object({
   sandbox: z.boolean().default(false),
   timeout: z.number().default(30000),
   version: z.string().default("v1"),
-  baseUrl: z.string().default("https://app.swervpay.co/"),
+  baseUrl: z.string().default("https://app.swervpay.co/api/"),
   logLevel: LogLevel.optional(),
 });
 
