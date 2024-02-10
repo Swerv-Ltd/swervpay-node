@@ -191,9 +191,23 @@ export const FundOrWithdrawCardSchema = z.object({
 export type FundOrWithdrawCardBody = z.infer<typeof FundOrWithdrawCardSchema>;
 
 export const CreateCardSchema = FundOrWithdrawCardSchema.extend({
-  provider: z.string(),
-  customer_id: z.string(),
-});
+  type: z.enum(["LITE", "COOPERATE", "DEFAULT"]).default("DEFAULT"),
+  issuer: z.enum(["MASTERCARD", "VISA"]),
+  customer_id: z.string().optional(),
+  currency: z.string().default("USD"),
+  name_on_card: z.string().optional(),
+}).refine(
+  (data) => {
+    if (data.type !== "LITE") {
+      return data.customer_id !== undefined;
+    }
+    return true;
+  },
+  {
+    message: "customer_id is required for non-lite card",
+    path: ["customer_id"],
+  }
+);
 export type CreateCardBody = z.infer<typeof CreateCardSchema>;
 
 export const PageAndLimitQuerySchema = z.object({

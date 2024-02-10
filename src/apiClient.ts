@@ -12,7 +12,7 @@ export class ApiClient {
   }
 
   async post<T = any>(options: { path: string; body: any }): Promise<T> {
-    return this.request<T>({
+    return this.#request<T>({
       method: "POST",
       path: options.path,
       body: options.body,
@@ -24,7 +24,7 @@ export class ApiClient {
 
     const path = query ? `${options.path}?${query}` : options.path;
 
-    return this.request<T>({
+    return this.#request<T>({
       method: "GET",
       path: path,
       body: {},
@@ -32,7 +32,7 @@ export class ApiClient {
   }
 
   async put<T = any>(options: { path: string; body: any }): Promise<T> {
-    return this.request<T>({
+    return this.#request<T>({
       method: "PUT",
       path: options.path,
       body: options.body,
@@ -40,19 +40,24 @@ export class ApiClient {
   }
 
   async delete<T = any>(options: { path: string; body: any }): Promise<T> {
-    return this.request<T>({
+    return this.#request<T>({
       method: "DELETE",
       path: options.path,
       body: options.body,
     });
   }
 
-  async request<T = any>(options: {
+  async #request<T = any>(options: {
     method: "POST" | "GET" | "PUT" | "DELETE";
     path: string;
     body: any;
+    headers?: any;
   }): Promise<T> {
-    const apiKey = await this.#apiKey();
+    let accessToken = null;
+
+    if (options.path !== "/auth") {
+      accessToken = await this.#getAccessToken();
+    }
 
     this.#logger.debug("Request data", {
       path: options.path,
@@ -64,7 +69,11 @@ export class ApiClient {
       method: options.method,
       headers: {
         "Content-Type": "application/json",
-        Authorization: `Bearer ${apiKey}`,
+        Authorization:
+          options.headers["Authorization"] != null
+            ? options.headers["Authorization"]
+            : `Bearer ${accessToken}`,
+        ...options.headers,
       },
       body: JSON.stringify({
         ...options.body,
@@ -80,7 +89,7 @@ export class ApiClient {
     return (await response.json()) as T;
   }
 
-  async #apiKey() {
+  async #getAccessToken(): Promise<string> {
     const apiKey = getApiKey(this.#options.secretKey);
 
     if (apiKey.status === "invalid") {
@@ -89,7 +98,20 @@ export class ApiClient {
       throw new Error("Missing API key");
     }
 
-    return apiKey.apiKey;
+    const res = await this.#request<{
+      access_token: string;
+    }>({
+      method: "GET",
+      path: "/auth",
+      body: {},
+      headers: {
+        Authorization: `Basic ${Buffer.from(
+          `${this.#options.businessId}:${apiKey.apiKey}`
+        ).toString("base64")}`,
+      },
+    });
+
+    return res.access_token;
   }
 }
 
