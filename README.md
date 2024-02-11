@@ -50,6 +50,15 @@ const config = {
 
 const swervpay = new swervpay.SwervpayClient(config);
 
+// Fetch access token manually
+const token = await swervpay.client.fetchAccessToken();
+
+// Set token manually
+swervpay.client.setAccessToken(token)
+
+// Get access token
+const token = swervpay.client.getAccessToken
+
 // Create a new customer
 const customer = await swervpay.customer.create({
   firstname: req.body.first_name,

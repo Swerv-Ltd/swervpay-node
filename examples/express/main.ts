@@ -5,10 +5,9 @@ import { SwervpayClient } from "@swervpaydev/sdk";
 env.config();
 
 const swervpay = new SwervpayClient({
-  businessId: "bus_mviuNSMKi74vTY8yvfP6nQ",
-  secretKey: "sk_dev_NzUsT9hn3sMi5dIRZa9K",
+  businessId: "bus_********************",
+  secretKey: "sk_dev_********************",
   logLevel: "debug",
-  baseUrl: "http://localhost:8888/api/",
 });
 
 const app = express();

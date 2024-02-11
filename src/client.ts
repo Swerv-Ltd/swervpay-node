@@ -40,6 +40,15 @@ export class SwervpayClient {
   }
 
   /**
+   * Gets the api client.
+   *
+   * @returns The ApiClient.
+   */
+  get client() {
+    return this.#apiClient;
+  }
+
+  /**
    * Gets the business.
    *
    * @returns The Business.

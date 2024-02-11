@@ -28,7 +28,7 @@ export class ApiClient {
 
       // Get the access token
       new Promise((resolve, reject) => {
-        this.#getAccessToken()
+        this.fetchAccessToken()
           .then((token) => {
             this.#accessToken = token;
             resolve(token);
@@ -43,6 +43,10 @@ export class ApiClient {
 
   setAccessToken(token: string) {
     this.#accessToken = token;
+  }
+
+  get getAccessToken() {
+    return this.#accessToken;
   }
 
   async post<T = any>(options: { path: string; body: any }): Promise<T> {
@@ -128,7 +132,7 @@ export class ApiClient {
     return (await response.json()) as T;
   }
 
-  async #getAccessToken(): Promise<string> {
+  async fetchAccessToken(): Promise<string> {
     const apiKey = getApiKey(this.#options.secretKey);
 
     if (apiKey.status === "invalid") {
