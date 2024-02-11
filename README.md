@@ -23,6 +23,10 @@
     <a href="https://docs.swervpay.co/changelog">Changelog</a>
 </p>
 
+### Documentation
+
+See [docs for NodeJS here](https://docs.swervpay.co/sdks/nodejs)
+
 ### Installation
 
 Install [swervpay-node](https://www.npmjs.com/package/@swervpaydev/sdk) sdk into your new or existing NodeJS application using any of your favorite package manager.
@@ -44,35 +48,39 @@ const config = {
   businessId: "<BUSINESS_ID>",
 };
 
-const swyftpay = new swervpay.SwyftpayClient(config);
+const swervpay = new swervpay.SwervpayClient(config);
 
 // Create a new customer
-await swyftpay.customer.create({
-  firstname: "user",
-  lastname: "user",
-  middlename: "user",
-  country: "user",
-  email: "user@mailinator.com",
+const customer = await swervpay.customer.create({
+  firstname: req.body.first_name,
+  lastname: req.body.last_name,
+  email: req.body.email,
+  middlename: "",
+  country: req.body.country,
 });
 
 // Create a new card
-await swyftpay.card.create({
-  type: "DEFAULT",
-  issuer: "MASTERCARD",
-  customer_id: "user",
-  currency: "USD",
+const card = await swervpay.card.create({
+  amount: req.body.amount,
+  currency: req.body.currency,
+  customer_id: req.body.customer_id,
+  type: req.body.type as "LITE" | "DEFAULT" | "COOPERATE",
+  issuer: req.body.issuer as "MASTERCARD" | "VISA",
+  name_on_card: req.body.name_on_card
 });
 
 // Create a new payout
-await swyftpay.payout.create({
-  bank_code: "user",
-  account_number: "user",
-  amount: "user",
-  currency: "NGN",
-  reference: "user",
-  naration: "user",
-  email: "user@mailinator.com",
+const payout = await swervpay.payout.create({
+  amount: req.body.amount,
+  currency: req.body.currency,
+  bank_code: req.body.bank_code,
+  account_number: req.body.account_number,
+  naration: req.body.narration,
+  email: req.body.email,
+  reference: req.body.reference,
 });
 ```
 
 Here, we initialize the Swervpay client with our secret key and business id. Then we create a new customer, card and payout.
+
+See more [examples](https://github.com/Swerv-Ltd/swervpay-node/tree/main/examples)

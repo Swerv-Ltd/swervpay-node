@@ -1,5 +1,5 @@
 import { ApiClient } from "../apiClient";
-import { SuccessResponse, TransactionModel } from "../types";
+import { CreatePayoutBody, SuccessResponse, TransactionModel } from "../types";
 
 /**
  * Represents a Payout resource.
@@ -20,7 +20,7 @@ export class Payout {
    * @param body The payout data.
    * @returns {Promise<SuccessResponse>} A promise that resolves to the created payout.
    */
-  async create(body: {}): Promise<SuccessResponse> {
+  async create(body: CreatePayoutBody): Promise<SuccessResponse> {
     return this.#client.post<SuccessResponse>({
       path: `/payouts`,
       body: body,

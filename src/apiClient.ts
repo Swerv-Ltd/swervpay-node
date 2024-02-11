@@ -1,14 +1,48 @@
 import { Logger } from "./logger";
-import { SwervpayClientOption } from "./types";
+import { AuthTokenModel, SwervpayClientOption } from "./types";
 
 export class ApiClient {
   #logger: Logger;
   #options: SwervpayClientOption;
   #apiUrl: string;
+  #accessToken: string | null;
+
   constructor(options: SwervpayClientOption) {
     this.#options = options;
+
+    if (!this.#options.baseUrl) {
+      this.#options.baseUrl = "https://app.swervpay.co/api/";
+    }
+    if (!this.#options.version) {
+      this.#options.version = "v1";
+    }
     this.#apiUrl = this.#options.baseUrl + this.#options.version;
     this.#logger = new Logger("swervpaydev", this.#options.logLevel);
+
+    this.#logger.debug("API URL", { url: this.#apiUrl });
+
+    if (this.#options.accessToken) {
+      this.#accessToken = this.#options.accessToken;
+    } else {
+      this.#accessToken = null;
+
+      // Get the access token
+      new Promise((resolve, reject) => {
+        this.#getAccessToken()
+          .then((token) => {
+            this.#accessToken = token;
+            resolve(token);
+          })
+          .catch((err) => {
+            this.#logger.error("Error getting access token", { ...err });
+            reject(err);
+          });
+      });
+    }
+  }
+
+  setAccessToken(token: string) {
+    this.#accessToken = token;
   }
 
   async post<T = any>(options: { path: string; body: any }): Promise<T> {
@@ -48,42 +82,47 @@ export class ApiClient {
   }
 
   async #request<T = any>(options: {
-    method: "POST" | "GET" | "PUT" | "DELETE";
+    method: "POST" | "GET" | "PUT" | "DELETE" | "HEAD";
     path: string;
     body: any;
     headers?: any;
   }): Promise<T> {
-    let accessToken = null;
-
-    if (options.path !== "/auth") {
-      accessToken = await this.#getAccessToken();
-    }
-
     this.#logger.debug("Request data", {
       path: options.path,
       body: options.body,
       method: options.method,
     });
 
-    const response = await fetch(`${this.#apiUrl}/${options.path}`, {
+    let fullHeaders = {
+      "Content-Type": "application/json",
+      "User-Agent": "Swervpay/NodeJS-Sdk",
+      Authorization:
+        options.headers != undefined && options.headers["Authorization"] != null
+          ? options.headers["Authorization"]
+          : `Bearer ${this.#accessToken}`,
+      ...options.headers,
+    };
+
+    const response = await fetch(`${this.#apiUrl}${options.path}`, {
       method: options.method,
-      headers: {
-        "Content-Type": "application/json",
-        Authorization:
-          options.headers["Authorization"] != null
-            ? options.headers["Authorization"]
-            : `Bearer ${accessToken}`,
-        ...options.headers,
-      },
-      body: JSON.stringify({
-        ...options.body,
-      }),
+      headers: fullHeaders,
+      body:
+        options.method == "GET" || options.method == "HEAD"
+          ? undefined
+          : JSON.stringify({
+              ...options.body,
+            }),
     });
 
-    if (response.status !== 200 && response.status !== 201) {
+    if ([200, 201].includes(response.status) == false) {
       const body = await response.json();
 
-      throw new Error(body as any);
+      this.#logger.error("Request error", {
+        status: response.status,
+        body: body,
+      });
+
+      throw body;
     }
 
     return (await response.json()) as T;
@@ -98,10 +137,8 @@ export class ApiClient {
       throw new Error("Missing API key");
     }
 
-    const res = await this.#request<{
-      access_token: string;
-    }>({
-      method: "GET",
+    const res = await this.#request<AuthTokenModel>({
+      method: "POST",
       path: "/auth",
       body: {},
       headers: {

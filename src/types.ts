@@ -7,11 +7,12 @@ export type LogLevel = z.infer<typeof LogLevel>;
 const SwervpayClientOption = z.object({
   businessId: z.string(),
   secretKey: z.string(),
-  sandbox: z.boolean().default(false),
-  timeout: z.number().default(30000),
-  version: z.string().default("v1"),
-  baseUrl: z.string().default("https://app.swervpay.co/api/"),
+  sandbox: z.boolean().default(false).optional(),
+  timeout: z.number().default(30000).optional(),
+  version: z.string().default("v1").optional(),
+  baseUrl: z.string().default("https://app.swervpay.co/api/").optional(),
   logLevel: LogLevel.optional(),
+  accessToken: z.string().optional(),
 });
 
 export type SwervpayClientOption = z.infer<typeof SwervpayClientOption>;
@@ -166,11 +167,26 @@ export const DocumentSchema = z.object({
 });
 export type Document = z.infer<typeof DocumentSchema>;
 
-export const CustomerKycSchema = z.object({
-  tier: z.string(),
-  document: DocumentSchema,
-  information: InformationSchema,
-});
+export const CustomerKycSchema = z
+  .object({
+    tier: z.enum(["ONE", "TWO", "FULL"]),
+    document: DocumentSchema.optional(),
+    information: InformationSchema.optional(),
+  })
+  .refine((data) => {
+    if (data.tier === "FULL") {
+      return data.information !== undefined && data.document !== undefined;
+    }
+
+    if (data.tier === "TWO") {
+      return data.document !== undefined;
+    }
+
+    if (data.tier === "ONE") {
+      return data.information !== undefined;
+    }
+    return true;
+  });
 export type CustomerKycBody = z.infer<typeof CustomerKycSchema>;
 
 export const UpdateCustomerSchema = z.object({
@@ -223,3 +239,37 @@ export const BusinessModelSchema = z.object({
   created_at: z.coerce.date(),
 });
 export type BusinessModel = z.infer<typeof BusinessModelSchema>;
+
+export const TokenSchema = z.object({
+  business_id: z.string(),
+  type: z.string(),
+  expires_at: z.number(),
+  issued_at: z.number(),
+  created_at: z.coerce.date(),
+  updated_at: z.coerce.date(),
+});
+export type Token = z.infer<typeof TokenSchema>;
+
+export const AuthTokenModelSchema = z.object({
+  access_token: z.string(),
+  token: TokenSchema,
+});
+export type AuthTokenModel = z.infer<typeof AuthTokenModelSchema>;
+
+export const CreatePayoutBodySchema = z.object({
+  bank_code: z.string(),
+  account_number: z.string(),
+  amount: z.string(),
+  currency: z.string().default("NGN"),
+  reference: z.string().optional(),
+  naration: z.string().optional(),
+  email: z.string(),
+});
+export type CreatePayoutBody = z.infer<typeof CreatePayoutBodySchema>;
+
+export const FxBodySchema = z.object({
+  from: z.string(),
+  to: z.string(),
+  amount: z.number(),
+});
+export type FxBody = z.infer<typeof FxBodySchema>;
