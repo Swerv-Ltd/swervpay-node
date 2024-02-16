@@ -1,5 +1,5 @@
 import { ApiClient } from "../apiClient";
-import { FxBody, TransactionModel } from "../types";
+import { ExchangeRateResponse, FxBody, TransactionModel } from "../types";
 
 /**
  * Represents a class for handling foreign exchange operations.
@@ -20,8 +20,8 @@ export class Fx {
    * @param body The request body containing the currency pair.
    * @returns A promise that resolves to the exchange rate.
    */
-  async rate(body: FxBody) {
-    return this.#client.post({
+  async rate(body: FxBody): Promise<ExchangeRateResponse> {
+    return this.#client.post<ExchangeRateResponse>({
       path: `/fx/rate`,
       body: body,
     });
@@ -33,7 +33,7 @@ export class Fx {
    * @returns A promise that resolves to the transaction model.
    */
   async exchange(body: FxBody): Promise<TransactionModel> {
-    return this.#client.post({
+    return this.#client.post<TransactionModel>({
       path: `/fx/exchange`,
       body: body,
     });

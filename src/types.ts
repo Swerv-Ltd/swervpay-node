@@ -273,3 +273,28 @@ export const FxBodySchema = z.object({
   amount: z.number(),
 });
 export type FxBody = z.infer<typeof FxBodySchema>;
+
+export const FromOrToSchema = z.object({
+  amount: z.string(),
+  currency: z.string(),
+});
+export type FromOrTo = z.infer<typeof FromOrToSchema>;
+
+export const ExchangeRateResponseSchema = z.object({
+  from: FromOrToSchema,
+  rate: z.number(),
+  to: FromOrToSchema,
+});
+export type ExchangeRateResponse = z.infer<typeof ExchangeRateResponseSchema>;
+
+export const CreateCardResponseSchema = z.object({
+  card_id: z.string(),
+  message: z.string(),
+});
+export type CreateCardResponse = z.infer<typeof CreateCardResponseSchema>;
+
+export const CreatePayoutResponseSchema = z.object({
+  message: z.string(),
+  reference: z.string(),
+});
+export type CreatePayoutResponse = z.infer<typeof CreatePayoutResponseSchema>;

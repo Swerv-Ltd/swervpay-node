@@ -2,7 +2,7 @@ import { ApiClient } from "../apiClient";
 import {
   CardModel,
   CreateCardBody,
-  CustomerModel,
+  CreateCardResponse,
   FundOrWithdrawCardBody,
   PageAndLimitQuery,
   SuccessResponse,
@@ -51,8 +51,8 @@ export class Card {
    * @param body - The card data.
    * @returns A promise that resolves with the created card data.
    */
-  async create(body: CreateCardBody): Promise<SuccessResponse> {
-    return this.#client.post<SuccessResponse>({
+  async create(body: CreateCardBody): Promise<CreateCardResponse> {
+    return this.#client.post<CreateCardResponse>({
       path: `/cards/`,
       body: body,
     });
