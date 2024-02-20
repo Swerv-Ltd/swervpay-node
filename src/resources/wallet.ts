@@ -1,5 +1,5 @@
 import { ApiClient } from "../apiClient";
-import { PageAndLimitQuery, WalletModel } from "../types";
+import { PageAndLimitQuery, WalletModel, WalletModelSchema } from "../types";
 
 /**
  * Represents a Wallet resource.
@@ -24,6 +24,7 @@ export class Wallet {
     return this.#client.get<WalletModel>({
       path: `/wallets/${id}`,
       query: {},
+      schema: WalletModelSchema,
     });
   }
 

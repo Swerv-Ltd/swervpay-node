@@ -3,8 +3,10 @@ import {
   CreateCustomerBody,
   CustomerKycBody,
   CustomerModel,
+  CustomerModelSchema,
   PageAndLimitQuery,
   SuccessResponse,
+  SuccessResponseSchema,
   UpdateCustomerBody,
 } from "../types";
 
@@ -31,6 +33,7 @@ export class Customer {
     return this.#client.get<CustomerModel>({
       path: `/customers/${id}`,
       query: {},
+      schema: CustomerModelSchema,
     });
   }
 
@@ -55,6 +58,7 @@ export class Customer {
     return this.#client.post<CustomerModel>({
       path: `/customers/`,
       body: body,
+      schema: CustomerModelSchema,
     });
   }
 
@@ -68,6 +72,7 @@ export class Customer {
     return this.#client.post<CustomerModel>({
       path: `/customers/${id}/update`,
       body: body,
+      schema: CustomerModelSchema,
     });
   }
 
@@ -81,6 +86,7 @@ export class Customer {
     return this.#client.post<SuccessResponse>({
       path: `/customers/${id}/kyc`,
       body: body,
+      schema: SuccessResponseSchema,
     });
   }
 
@@ -93,6 +99,7 @@ export class Customer {
     return this.#client.post<SuccessResponse>({
       path: `/customers/${id}/blacklist`,
       body: {},
+      schema: SuccessResponseSchema,
     });
   }
 }

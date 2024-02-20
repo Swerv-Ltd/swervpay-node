@@ -3,9 +3,11 @@ import {
   CardModel,
   CreateCardBody,
   CreateCardResponse,
+  CreateCardResponseSchema,
   FundOrWithdrawCardBody,
   PageAndLimitQuery,
   SuccessResponse,
+  SuccessResponseSchema,
 } from "../types";
 
 /**
@@ -55,6 +57,7 @@ export class Card {
     return this.#client.post<CreateCardResponse>({
       path: `/cards/`,
       body: body,
+      schema: CreateCardResponseSchema,
     });
   }
 
@@ -67,6 +70,7 @@ export class Card {
     return this.#client.post<SuccessResponse>({
       path: `/cards/${id}/freeze`,
       body: {},
+      schema: SuccessResponseSchema,
     });
   }
 
@@ -79,6 +83,7 @@ export class Card {
     return this.#client.post<SuccessResponse>({
       path: `/cards/${id}/terminate`,
       body: {},
+      schema: SuccessResponseSchema,
     });
   }
 
@@ -94,6 +99,7 @@ export class Card {
     return this.#client.post<SuccessResponse>({
       path: `/cards/${id}/fund`,
       body: body,
+      schema: SuccessResponseSchema,
     });
   }
 
@@ -109,6 +115,7 @@ export class Card {
     return this.#client.post<SuccessResponse>({
       path: `/cards/${id}/withdraw`,
       body: body,
+      schema: SuccessResponseSchema,
     });
   }
 }

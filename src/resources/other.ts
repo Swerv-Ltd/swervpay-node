@@ -1,5 +1,10 @@
 import { ApiClient } from "../apiClient";
-import { BankModel, ResolveAccountBody, ResolveAccountModel } from "../types";
+import {
+  BankModel,
+  ResolveAccountBody,
+  ResolveAccountModel,
+  ResolveAccountModelSchema,
+} from "../types";
 
 /**
  * Represents a class for interacting with other resources.
@@ -37,6 +42,7 @@ export class Other {
     return this.#client.post<ResolveAccountModel>({
       path: `/resolve-account-number`,
       body: body,
+      schema: ResolveAccountModelSchema,
     });
   }
 }

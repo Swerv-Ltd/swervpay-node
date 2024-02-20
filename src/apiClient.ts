@@ -1,5 +1,10 @@
 import { Logger } from "./logger";
-import { AuthTokenModel, SwervpayClientOption } from "./types";
+import {
+  AuthTokenModel,
+  AuthTokenModelSchema,
+  SwervpayClientOption,
+} from "./types";
+import { z } from "zod";
 
 export class ApiClient {
   #logger: Logger;
@@ -49,7 +54,11 @@ export class ApiClient {
     return this.#accessToken;
   }
 
-  async post<T = any>(options: { path: string; body: any }): Promise<T> {
+  async post<T = any>(options: {
+    path: string;
+    body: any;
+    schema?: z.ZodType<T>;
+  }): Promise<T> {
     return this.#request<T>({
       method: "POST",
       path: options.path,
@@ -57,7 +66,11 @@ export class ApiClient {
     });
   }
 
-  async get<T = any>(options: { path: string; query: any }): Promise<T> {
+  async get<T = any>(options: {
+    path: string;
+    query: any;
+    schema?: z.ZodType<T>;
+  }): Promise<T> {
     const query = new URLSearchParams(options.query).toString();
 
     const path = query ? `${options.path}?${query}` : options.path;
@@ -69,7 +82,11 @@ export class ApiClient {
     });
   }
 
-  async put<T = any>(options: { path: string; body: any }): Promise<T> {
+  async put<T = any>(options: {
+    path: string;
+    body: any;
+    schema?: z.ZodType<T>;
+  }): Promise<T> {
     return this.#request<T>({
       method: "PUT",
       path: options.path,
@@ -77,7 +94,11 @@ export class ApiClient {
     });
   }
 
-  async delete<T = any>(options: { path: string; body: any }): Promise<T> {
+  async delete<T = any>(options: {
+    path: string;
+    body: any;
+    schema?: z.ZodType<T>;
+  }): Promise<T> {
     return this.#request<T>({
       method: "DELETE",
       path: options.path,
@@ -90,6 +111,7 @@ export class ApiClient {
     path: string;
     body: any;
     headers?: any;
+    schema?: z.ZodType<T>;
   }): Promise<T> {
     this.#logger.debug("Request data", {
       path: options.path,
@@ -129,7 +151,17 @@ export class ApiClient {
       throw body;
     }
 
-    return (await response.json()) as T;
+    const data = await response.json();
+
+    if (options.schema) {
+      try {
+        return options.schema.parse(data);
+      } catch (error) {
+        return data as T;
+      }
+    }
+
+    return data as T;
   }
 
   async fetchAccessToken(): Promise<string> {
@@ -150,6 +182,7 @@ export class ApiClient {
           `${this.#options.businessId}:${apiKey.apiKey}`
         ).toString("base64")}`,
       },
+      schema: AuthTokenModelSchema,
     });
 
     return res.access_token;

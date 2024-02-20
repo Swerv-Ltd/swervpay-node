@@ -1,5 +1,11 @@
 import { ApiClient } from "../apiClient";
-import { ExchangeRateResponse, FxBody, TransactionModel } from "../types";
+import {
+  ExchangeRateResponse,
+  ExchangeRateResponseSchema,
+  FxBody,
+  TransactionModel,
+  TransactionModelSchema,
+} from "../types";
 
 /**
  * Represents a class for handling foreign exchange operations.
@@ -24,6 +30,7 @@ export class Fx {
     return this.#client.post<ExchangeRateResponse>({
       path: `/fx/rate`,
       body: body,
+      schema: ExchangeRateResponseSchema,
     });
   }
 
@@ -36,6 +43,7 @@ export class Fx {
     return this.#client.post<TransactionModel>({
       path: `/fx/exchange`,
       body: body,
+      schema: TransactionModelSchema,
     });
   }
 }

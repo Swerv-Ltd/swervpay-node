@@ -18,7 +18,6 @@ const SwervpayClientOption = z.object({
 export type SwervpayClientOption = z.infer<typeof SwervpayClientOption>;
 
 export const CustomerModelSchema = z.object({
-  business_id: z.string(),
   country: z.string(),
   created_at: z.coerce.date(),
   email: z.string(),
@@ -41,11 +40,9 @@ export const CardModelSchema = z.object({
   address_state: z.string(),
   address_street: z.string(),
   balance: z.number(),
-  business_id: z.string(),
   card_number: z.string(),
   created_at: z.coerce.date(),
   currency: z.string(),
-  customer_id: z.string(),
   cvv: z.string(),
   expiry: z.string(),
   freeze: z.boolean(),
@@ -66,20 +63,14 @@ export const WalletModelSchema = z.object({
   account_number: z.string(),
   account_type: z.string(),
   address: z.string(),
-  asset_id: z.string(),
   balance: z.number(),
   bank_address: z.string(),
   bank_code: z.string(),
   bank_name: z.string(),
-  business_id: z.string(),
-  can_received: z.boolean(),
-  can_send: z.boolean(),
   created_at: z.coerce.date(),
   customer_id: z.string(),
   id: z.string(),
-  is_blocked: z.boolean(),
   label: z.string(),
-  parent_wallet_id: z.string(),
   pending_balance: z.number(),
   reference: z.string(),
   routing_number: z.string(),
@@ -92,14 +83,11 @@ export const TransactionModelSchema = z.object({
   account_name: z.string(),
   account_number: z.string(),
   amount: z.number(),
-  asset_id: z.string(),
   bank_code: z.string(),
   bank_name: z.string(),
-  business_id: z.string(),
   category: z.string(),
   charges: z.number(),
   created_at: z.coerce.date(),
-  customer_id: z.string(),
   detail: z.string(),
   fiat_rate: z.number(),
   id: z.string(),
@@ -108,10 +96,8 @@ export const TransactionModelSchema = z.object({
   report_message: z.string(),
   session_id: z.string(),
   status: z.string(),
-  sub_wallet_id: z.string(),
   type: z.string(),
   updated_at: z.coerce.date(),
-  wallet_id: z.string(),
 });
 export type TransactionModel = z.infer<typeof TransactionModelSchema>;
 
@@ -233,10 +219,15 @@ export const PageAndLimitQuerySchema = z.object({
 export type PageAndLimitQuery = z.infer<typeof PageAndLimitQuerySchema>;
 
 export const BusinessModelSchema = z.object({
-  name: z.string(),
-  id: z.string(),
-  updated_at: z.coerce.date(),
+  address: z.string(),
+  country: z.string(),
   created_at: z.coerce.date(),
+  email: z.string(),
+  id: z.string(),
+  logo: z.string(),
+  slug: z.string(),
+  type: z.string(),
+  updated_at: z.coerce.date(),
 });
 export type BusinessModel = z.infer<typeof BusinessModelSchema>;
 
@@ -275,7 +266,7 @@ export const FxBodySchema = z.object({
 export type FxBody = z.infer<typeof FxBodySchema>;
 
 export const FromOrToSchema = z.object({
-  amount: z.string(),
+  amount: z.number(),
   currency: z.string(),
 });
 export type FromOrTo = z.infer<typeof FromOrToSchema>;

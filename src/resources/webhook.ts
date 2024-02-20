@@ -1,5 +1,5 @@
 import { ApiClient } from "../apiClient";
-import { SuccessResponse } from "../types";
+import { SuccessResponse, SuccessResponseSchema } from "../types";
 
 /**
  * Represents a Webhook resource.
@@ -24,6 +24,7 @@ export class Webhook {
     return this.#client.post<SuccessResponse>({
       path: `/webhooks/${id}/test`,
       body: {},
+      schema: SuccessResponseSchema,
     });
   }
 
@@ -36,6 +37,7 @@ export class Webhook {
     return this.#client.post<SuccessResponse>({
       path: `/webhooks/${id}/retry`,
       body: {},
+      schema: SuccessResponseSchema,
     });
   }
 }

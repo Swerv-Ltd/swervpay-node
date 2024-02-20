@@ -1,5 +1,9 @@
 import { ApiClient } from "../apiClient";
-import { PageAndLimitQuery, TransactionModel } from "../types";
+import {
+  PageAndLimitQuery,
+  TransactionModel,
+  TransactionModelSchema,
+} from "../types";
 
 /**
  * Represents a transaction resource.
@@ -24,6 +28,7 @@ export class Transaction {
     return this.#client.get<TransactionModel>({
       path: `/transactions/${id}`,
       query: {},
+      schema: TransactionModelSchema,
     });
   }
 

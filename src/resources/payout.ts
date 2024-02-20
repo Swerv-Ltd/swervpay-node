@@ -1,8 +1,11 @@
 import { ApiClient } from "../apiClient";
 import {
   CreatePayoutBody,
+  CreatePayoutBodySchema,
   CreatePayoutResponse,
+  CreatePayoutResponseSchema,
   TransactionModel,
+  TransactionModelSchema,
 } from "../types";
 
 /**
@@ -28,6 +31,7 @@ export class Payout {
     return this.#client.post<CreatePayoutResponse>({
       path: `/payouts`,
       body: body,
+      schema: CreatePayoutResponseSchema,
     });
   }
 
@@ -40,6 +44,7 @@ export class Payout {
     return this.#client.get<TransactionModel>({
       path: `/payouts/${id}`,
       query: {},
+      schema: TransactionModelSchema,
     });
   }
 }

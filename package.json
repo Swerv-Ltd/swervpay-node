@@ -1,7 +1,7 @@
 {
   "name": "@swervpaydev/sdk",
-  "version": "0.0.5",
-  "description": "Statussync Node.JS SDK",
+  "version": "0.0.6",
+  "description": "Official Swervpay Node.JS SDK",
   "license": "MIT",
   "main": "./dist/index.js",
   "types": "./dist/index.d.ts",

@@ -1,5 +1,5 @@
 import { ApiClient } from "../apiClient";
-import { BusinessModel } from "../types";
+import { BusinessModel, BusinessModelSchema } from "../types";
 
 /**
  * Represents a business resource.
@@ -23,6 +23,7 @@ export class Business {
     return this.#client.get<BusinessModel>({
       path: `/business`,
       query: {},
+      schema: BusinessModelSchema,
     });
   }
 }
