@@ -1,6 +1,7 @@
 import { ApiClient } from "./apiClient";
 import { Business } from "./resources/business";
 import { Card } from "./resources/card";
+import { Collection } from "./resources/collection";
 import { Customer } from "./resources/customer";
 import { Fx } from "./resources/fx";
 import { Other } from "./resources/other";
@@ -24,6 +25,7 @@ export class SwervpayClient {
   #wallet: Wallet;
   #webhook: Webhook;
   #business: Business;
+  #collection: Collection;
 
   constructor(options: SwervpayClientOption) {
     this.#apiClient = new ApiClient(options);
@@ -37,6 +39,7 @@ export class SwervpayClient {
     this.#wallet = new Wallet(this.#apiClient);
     this.#webhook = new Webhook(this.#apiClient);
     this.#business = new Business(this.#apiClient);
+    this.#collection = new Collection(this.#apiClient);
   }
 
   /**
@@ -127,5 +130,15 @@ export class SwervpayClient {
    */
   get webhook() {
     return this.#webhook;
+  }
+
+  /**
+   * Gets the collection.
+   *
+   * @returns The Collection.
+   */
+
+  get collection() {
+    return this.#collection;
   }
 }

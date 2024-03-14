@@ -192,7 +192,7 @@ export const FundOrWithdrawCardSchema = z.object({
 });
 export type FundOrWithdrawCardBody = z.infer<typeof FundOrWithdrawCardSchema>;
 
-export const CreateCardSchema = FundOrWithdrawCardSchema.extend({
+export const CreateCardBodySchema = FundOrWithdrawCardSchema.extend({
   type: z.enum(["LITE", "COOPERATE", "DEFAULT"]).default("DEFAULT"),
   issuer: z.enum(["MASTERCARD", "VISA"]),
   customer_id: z.string().optional(),
@@ -210,7 +210,7 @@ export const CreateCardSchema = FundOrWithdrawCardSchema.extend({
     path: ["customer_id"],
   }
 );
-export type CreateCardBody = z.infer<typeof CreateCardSchema>;
+export type CreateCardBody = z.infer<typeof CreateCardBodySchema>;
 
 export const PageAndLimitQuerySchema = z.object({
   page: z.number().default(1),
@@ -232,12 +232,9 @@ export const BusinessModelSchema = z.object({
 export type BusinessModel = z.infer<typeof BusinessModelSchema>;
 
 export const TokenSchema = z.object({
-  business_id: z.string(),
   type: z.string(),
   expires_at: z.number(),
   issued_at: z.number(),
-  created_at: z.coerce.date(),
-  updated_at: z.coerce.date(),
 });
 export type Token = z.infer<typeof TokenSchema>;
 
@@ -289,3 +286,64 @@ export const CreatePayoutResponseSchema = z.object({
   reference: z.string(),
 });
 export type CreatePayoutResponse = z.infer<typeof CreatePayoutResponseSchema>;
+
+export const CardTransactionResponseSchema = z.object({
+  amount: z.string(),
+  category: z.string(),
+  charges: z.string(),
+  created_at: z.string(),
+  currency: z.string(),
+  id: z.string(),
+  merchant_city: z.string(),
+  merchant_country: z.string(),
+  merchant_mcc: z.string(),
+  merchant_mid: z.string(),
+  merchant_name: z.string(),
+  merchant_postal_code: z.string(),
+  merchant_state: z.string(),
+  reference: z.string(),
+  report: z.string(),
+  report_message: z.string(),
+  status: z.string(),
+  type: z.string(),
+  updated_at: z.string(),
+});
+export type CardTransactionResponse = z.infer<
+  typeof CardTransactionResponseSchema
+>;
+
+export const CollectionHistoryResponseSchema = z.object({
+  amount: z.string(),
+  charges: z.string(),
+  created_at: z.string(),
+  currency: z.string(),
+  id: z.string(),
+  payment_method: z.string(),
+  reference: z.string(),
+  updated_at: z.string(),
+});
+export type CollectionHistoryResponse = z.infer<
+  typeof CollectionHistoryResponseSchema
+>;
+
+export const CreateCollectionBodySchema = z
+  .object({
+    customer_id: z.string().optional(),
+    currency: z.enum(["NGN", "USD"]),
+    merchant_name: z.string(),
+    amount: z.number(),
+    type: z.enum(["DEFAULT", "ONE_TIME"]),
+  })
+  .refine(
+    (data) => {
+      if (data.type === "DEFAULT") {
+        return data.customer_id !== undefined;
+      }
+      return true;
+    },
+    {
+      message: "customer_id is required for non-lite card",
+      path: ["customer_id"],
+    }
+  );
+export type CreateCollectionBody = z.infer<typeof CreateCollectionBodySchema>;

@@ -1,9 +1,12 @@
 import { ApiClient } from "../apiClient";
 import {
   CardModel,
+  CardTransactionResponse,
+  CardTransactionResponseSchema,
   CreateCardBody,
   CreateCardResponse,
   CreateCardResponseSchema,
+  CreateCardBodySchema,
   FundOrWithdrawCardBody,
   PageAndLimitQuery,
   SuccessResponse,
@@ -49,14 +52,46 @@ export class Card {
   }
 
   /**
+   * Retrieves a card transaction by its ID & transaction id.
+   * @param id - The ID of the card.
+   * @returns A promise that resolves with the card data.
+   */
+  async transaction(
+    id: string,
+    transactionId: string
+  ): Promise<CardTransactionResponse> {
+    return this.#client.get<CardTransactionResponse>({
+      path: `/cards/${id}/transactions/${transactionId}`,
+      query: {},
+      schema: CardTransactionResponseSchema,
+    });
+  }
+
+  /**
+   * Retrieves card transactions by their ID.
+   * @param query - The query parameters for pagination.
+   * @returns A promise that resolves with the card transaction data.
+   */
+  async transactions(
+    id: string,
+    query: PageAndLimitQuery
+  ): Promise<CardTransactionResponse[]> {
+    return this.#client.get<CardTransactionResponse[]>({
+      path: `/cards/${id}/transactions`,
+      query: query,
+    });
+  }
+
+  /**
    * Creates a new card.
    * @param body - The card data.
    * @returns A promise that resolves with the created card data.
    */
   async create(body: CreateCardBody): Promise<CreateCardResponse> {
+    const payload = CreateCardBodySchema.safeParse(body);
     return this.#client.post<CreateCardResponse>({
       path: `/cards/`,
-      body: body,
+      body: payload,
       schema: CreateCardResponseSchema,
     });
   }

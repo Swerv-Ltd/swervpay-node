@@ -1,6 +1,7 @@
 import { ApiClient } from "../apiClient";
 import {
   CreateCustomerBody,
+  CreateCustomerSchema,
   CustomerKycBody,
   CustomerModel,
   CustomerModelSchema,
@@ -55,9 +56,10 @@ export class Customer {
    * @returns A promise that resolves to the created customer data.
    */
   async create(body: CreateCustomerBody): Promise<CustomerModel> {
+    const payload = CreateCustomerSchema.safeParse(body);
     return this.#client.post<CustomerModel>({
       path: `/customers/`,
-      body: body,
+      body: payload,
       schema: CustomerModelSchema,
     });
   }
@@ -68,11 +70,11 @@ export class Customer {
    * @param body - The updated customer data.
    * @returns A promise that resolves to the updated customer data.
    */
-  async update(id: string, body: UpdateCustomerBody): Promise<CustomerModel> {
-    return this.#client.post<CustomerModel>({
+  async update(id: string, body: UpdateCustomerBody): Promise<SuccessResponse> {
+    return this.#client.post<SuccessResponse>({
       path: `/customers/${id}/update`,
       body: body,
-      schema: CustomerModelSchema,
+      schema: SuccessResponseSchema,
     });
   }
 
