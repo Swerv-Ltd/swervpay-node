@@ -47,7 +47,7 @@ export class SwervpayClient {
    *
    * @returns The ApiClient.
    */
-  get client() {
+  get client(): ApiClient {
     return this.#apiClient;
   }
 
@@ -56,7 +56,7 @@ export class SwervpayClient {
    *
    * @returns The Business.
    */
-  get business() {
+  get business(): Business {
     return this.#business;
   }
 
@@ -65,7 +65,7 @@ export class SwervpayClient {
    *
    * @returns The Card.
    */
-  get card() {
+  get card(): Card {
     return this.#card;
   }
 
@@ -74,7 +74,7 @@ export class SwervpayClient {
    *
    * @returns The Customer.
    */
-  get customer() {
+  get customer(): Customer {
     return this.#customer;
   }
 
@@ -83,7 +83,7 @@ export class SwervpayClient {
    *
    * @returns The Transaction.
    */
-  get transaction() {
+  get transaction(): Transaction {
     return this.#transaction;
   }
 
@@ -92,7 +92,7 @@ export class SwervpayClient {
    *
    * @returns The Payout.
    */
-  get payout() {
+  get payout(): Payout {
     return this.#payout;
   }
 
@@ -101,7 +101,7 @@ export class SwervpayClient {
    *
    * @returns The Fx.
    */
-  get fx() {
+  get fx(): Fx {
     return this.#fx;
   }
 
@@ -110,7 +110,7 @@ export class SwervpayClient {
    *
    * @returns The Other.
    */
-  get other() {
+  get other(): Other {
     return this.#other;
   }
 
@@ -119,7 +119,7 @@ export class SwervpayClient {
    *
    * @returns The Wallet.
    */
-  get wallet() {
+  get wallet(): Wallet {
     return this.#wallet;
   }
 
@@ -128,7 +128,7 @@ export class SwervpayClient {
    *
    * @returns The webhook.
    */
-  get webhook() {
+  get webhook(): Webhook {
     return this.#webhook;
   }
 
@@ -138,7 +138,7 @@ export class SwervpayClient {
    * @returns The Collection.
    */
 
-  get collection() {
+  get collection(): Collection {
     return this.#collection;
   }
 }

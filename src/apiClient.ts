@@ -1,9 +1,5 @@
 import { Logger } from "./logger";
-import {
-  AuthTokenModel,
-  AuthTokenModelSchema,
-  SwervpayClientOption,
-} from "./types";
+import { AuthTokenModelSchema, SwervpayClientOption } from "./types";
 import { z } from "zod";
 
 export class ApiClient {
@@ -16,7 +12,9 @@ export class ApiClient {
     this.#options = options;
 
     if (!this.#options.baseUrl) {
-      this.#options.baseUrl = "https://app.swervpay.co/api/";
+      this.#options.baseUrl = this.#options.sandbox
+        ? "https://sandbox.swervpay.co/api/"
+        : "https://app.swervpay.co/api/";
     }
     if (!this.#options.version) {
       this.#options.version = "v1";
@@ -30,19 +28,6 @@ export class ApiClient {
       this.#accessToken = this.#options.accessToken;
     } else {
       this.#accessToken = null;
-
-      // Get the access token
-      new Promise((resolve, reject) => {
-        this.fetchAccessToken()
-          .then((token) => {
-            this.#accessToken = token;
-            resolve(token);
-          })
-          .catch((err) => {
-            this.#logger.error("Error getting access token", { ...err });
-            reject(err);
-          });
-      });
     }
   }
 
@@ -59,10 +44,30 @@ export class ApiClient {
     body: any;
     schema?: z.ZodType<T>;
   }): Promise<T> {
-    return this.#request<T>({
+    return this.#handleUnauthorized<T>(
+      () => {
+        return this.#request({
+          method: "POST",
+          path: options.path,
+          body: options.body,
+        });
+      },
+      {
+        schema: options.schema,
+      }
+    );
+  }
+
+  async #_post(options: {
+    path: string;
+    body: any;
+    headers: any;
+  }): Promise<Response> {
+    return this.#request({
       method: "POST",
       path: options.path,
       body: options.body,
+      headers: options.headers,
     });
   }
 
@@ -71,15 +76,22 @@ export class ApiClient {
     query: any;
     schema?: z.ZodType<T>;
   }): Promise<T> {
-    const query = new URLSearchParams(options.query).toString();
+    return this.#handleUnauthorized<T>(
+      () => {
+        const query = new URLSearchParams(options.query).toString();
 
-    const path = query ? `${options.path}?${query}` : options.path;
+        const path = query ? `${options.path}?${query}` : options.path;
 
-    return this.#request<T>({
-      method: "GET",
-      path: path,
-      body: {},
-    });
+        return this.#request({
+          method: "GET",
+          path: path,
+          body: {},
+        });
+      },
+      {
+        schema: options.schema,
+      }
+    );
   }
 
   async put<T = any>(options: {
@@ -87,11 +99,18 @@ export class ApiClient {
     body: any;
     schema?: z.ZodType<T>;
   }): Promise<T> {
-    return this.#request<T>({
-      method: "PUT",
-      path: options.path,
-      body: options.body,
-    });
+    return this.#handleUnauthorized<T>(
+      () => {
+        return this.#request({
+          method: "PUT",
+          path: options.path,
+          body: options.body,
+        });
+      },
+      {
+        schema: options.schema,
+      }
+    );
   }
 
   async delete<T = any>(options: {
@@ -99,20 +118,26 @@ export class ApiClient {
     body: any;
     schema?: z.ZodType<T>;
   }): Promise<T> {
-    return this.#request<T>({
-      method: "DELETE",
-      path: options.path,
-      body: options.body,
-    });
+    return this.#handleUnauthorized<T>(
+      () => {
+        return this.#request({
+          method: "DELETE",
+          path: options.path,
+          body: options.body,
+        });
+      },
+      {
+        schema: options.schema,
+      }
+    );
   }
 
-  async #request<T = any>(options: {
+  async #request(options: {
     method: "POST" | "GET" | "PUT" | "DELETE" | "HEAD";
     path: string;
     body: any;
     headers?: any;
-    schema?: z.ZodType<T>;
-  }): Promise<T> {
+  }): Promise<Response> {
     this.#logger.debug("Request data", {
       path: options.path,
       body: options.body,
@@ -139,6 +164,23 @@ export class ApiClient {
               ...options.body,
             }),
     });
+
+    return response;
+  }
+
+  async #handleUnauthorized<T = any>(
+    sendRequest: () => Promise<Response>,
+    options: {
+      schema?: z.ZodType<T>;
+    }
+  ): Promise<T> {
+    let response = await sendRequest();
+
+    if (response.status === 401) {
+      this.#accessToken = await this.fetchAccessToken();
+
+      response = await sendRequest();
+    }
 
     if ([200, 201].includes(response.status) == false) {
       const body = await response.json();
@@ -173,8 +215,7 @@ export class ApiClient {
       throw new Error("Missing API key");
     }
 
-    const res = await this.#request<AuthTokenModel>({
-      method: "POST",
+    const response = await this.#_post({
       path: "/auth",
       body: {},
       headers: {
@@ -182,10 +223,22 @@ export class ApiClient {
           `${this.#options.businessId}:${apiKey.apiKey}`
         ).toString("base64")}`,
       },
-      schema: AuthTokenModelSchema,
     });
 
-    return res.access_token;
+    if ([200, 201].includes(response.status) == false) {
+      const body = await response.json();
+
+      this.#logger.error("Request error", {
+        status: response.status,
+        body: body,
+      });
+
+      throw body;
+    }
+
+    const data = await response.json();
+
+    return AuthTokenModelSchema.parse(data).access_token;
   }
 }
 
