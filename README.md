@@ -46,12 +46,10 @@ const swervpay = require("@swervpaydev/sdk");
 const config = {
   secretKey: "<SECRET_KEY>",
   businessId: "<BUSINESS_ID>",
+  sandbox: false,
 };
 
 const swervpay = new swervpay.SwervpayClient(config);
-
-// Fetch access token manually
-const token = await swervpay.client.fetchAccessToken();
 
 // Set token manually
 swervpay.client.setAccessToken(token)
