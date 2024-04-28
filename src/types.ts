@@ -246,9 +246,9 @@ export type AuthTokenModel = z.infer<typeof AuthTokenModelSchema>;
 
 export const CreatePayoutBodySchema = z.object({
   bank_code: z.string(),
-  account_number: z.string(),
+  account_number: z.number(),
   amount: z.string(),
-  currency: z.string().default("NGN"),
+  currency: z.enum(["NGN", "USD"]).default("NGN"),
   reference: z.string().optional(),
   naration: z.string().optional(),
   email: z.string(),
@@ -284,6 +284,7 @@ export type CreateCardResponse = z.infer<typeof CreateCardResponseSchema>;
 export const CreatePayoutResponseSchema = z.object({
   message: z.string(),
   reference: z.string(),
+  id: z.string(),
 });
 export type CreatePayoutResponse = z.infer<typeof CreatePayoutResponseSchema>;
 
