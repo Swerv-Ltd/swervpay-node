@@ -246,7 +246,7 @@ export type AuthTokenModel = z.infer<typeof AuthTokenModelSchema>;
 
 export const CreatePayoutBodySchema = z.object({
   bank_code: z.string(),
-  account_number: z.number(),
+  account_number: z.string(),
   amount: z.number(),
   currency: z.enum(["NGN", "USD"]).default("NGN"),
   reference: z.string().optional(),
