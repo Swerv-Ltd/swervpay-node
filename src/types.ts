@@ -1,6 +1,6 @@
 import { z } from "zod";
 
-const LogLevel = z.enum(["debug", "info", "warn", "error"]);
+const LogLevel = z.enum(["log", "debug", "info", "warn", "error"]);
 
 export type LogLevel = z.infer<typeof LogLevel>;
 
@@ -10,7 +10,7 @@ const SwervpayClientOption = z.object({
   sandbox: z.boolean().default(false).optional(),
   timeout: z.number().default(30000).optional(),
   version: z.string().default("v1").optional(),
-  baseUrl: z.string().default("https://app.swervpay.co/api/").optional(),
+  baseUrl: z.string().default("https://api.swervpay.co/api/").optional(),
   logLevel: LogLevel.optional(),
   accessToken: z.string().optional(),
 });
@@ -250,8 +250,7 @@ export const CreatePayoutBodySchema = z.object({
   amount: z.number(),
   currency: z.enum(["NGN", "USD"]).default("NGN"),
   reference: z.string().optional(),
-  naration: z.string().optional(),
-  email: z.string(),
+  narration: z.string().optional(),
 });
 export type CreatePayoutBody = z.infer<typeof CreatePayoutBodySchema>;
 

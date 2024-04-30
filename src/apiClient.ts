@@ -14,7 +14,7 @@ export class ApiClient {
     if (!this.#options.baseUrl) {
       this.#options.baseUrl = this.#options.sandbox
         ? "https://sandbox.swervpay.co/api/"
-        : "https://app.swervpay.co/api/";
+        : "https://api.swervpay.co/api/";
     }
     if (!this.#options.version) {
       this.#options.version = "v1";
