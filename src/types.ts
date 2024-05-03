@@ -196,7 +196,7 @@ export const CreateCardBodySchema = FundOrWithdrawCardSchema.extend({
   type: z.enum(["LITE", "COOPERATE", "DEFAULT"]).default("DEFAULT"),
   issuer: z.enum(["MASTERCARD", "VISA"]),
   customer_id: z.string().optional(),
-  currency: z.string().default("USD"),
+  currency: z.enum(["NGN", "USD"]).default("USD"),
   name_on_card: z.string().optional(),
 }).refine(
   (data) => {
@@ -255,8 +255,8 @@ export const CreatePayoutBodySchema = z.object({
 export type CreatePayoutBody = z.infer<typeof CreatePayoutBodySchema>;
 
 export const FxBodySchema = z.object({
-  from: z.string(),
-  to: z.string(),
+  from: z.enum(["NGN", "USD"]),
+  to: z.enum(["NGN", "USD"]),
   amount: z.number(),
 });
 export type FxBody = z.infer<typeof FxBodySchema>;
@@ -347,3 +347,11 @@ export const CreateCollectionBodySchema = z
     }
   );
 export type CreateCollectionBody = z.infer<typeof CreateCollectionBodySchema>;
+
+export const FundOrWithdrawCardResponseSchema = SuccessResponseSchema.extend({
+  transaction: TransactionModelSchema,
+});
+
+export type FundOrWithdrawCardResponse = z.infer<
+  typeof FundOrWithdrawCardResponseSchema
+>;

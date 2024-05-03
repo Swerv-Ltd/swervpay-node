@@ -28,10 +28,12 @@ export class Payout {
    * @returns {Promise<CreatePayoutResponse>} A promise that resolves to the created payout.
    */
   async create(body: CreatePayoutBody): Promise<CreatePayoutResponse> {
-    return this.#client.post<CreatePayoutResponse>({
-      path: `/payouts`,
-      body: body,
-      schema: CreatePayoutResponseSchema,
+    return CreatePayoutBodySchema.parseAsync(body).then((value) => {
+      return this.#client.post<CreatePayoutResponse>({
+        path: `/payouts`,
+        body: value,
+        schema: CreatePayoutResponseSchema,
+      });
     });
   }
 

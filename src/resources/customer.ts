@@ -3,12 +3,14 @@ import {
   CreateCustomerBody,
   CreateCustomerSchema,
   CustomerKycBody,
+  CustomerKycSchema,
   CustomerModel,
   CustomerModelSchema,
   PageAndLimitQuery,
   SuccessResponse,
   SuccessResponseSchema,
   UpdateCustomerBody,
+  UpdateCustomerSchema,
 } from "../types";
 
 /**
@@ -56,11 +58,12 @@ export class Customer {
    * @returns A promise that resolves to the created customer data.
    */
   async create(body: CreateCustomerBody): Promise<CustomerModel> {
-    const payload = CreateCustomerSchema.safeParse(body);
-    return this.#client.post<CustomerModel>({
-      path: `/customers/`,
-      body: payload,
-      schema: CustomerModelSchema,
+    return CreateCustomerSchema.parseAsync(body).then((payload) => {
+      return this.#client.post<CustomerModel>({
+        path: `/customers/`,
+        body: payload,
+        schema: CustomerModelSchema,
+      });
     });
   }
 
@@ -71,10 +74,12 @@ export class Customer {
    * @returns A promise that resolves to the updated customer data.
    */
   async update(id: string, body: UpdateCustomerBody): Promise<SuccessResponse> {
-    return this.#client.post<SuccessResponse>({
-      path: `/customers/${id}/update`,
-      body: body,
-      schema: SuccessResponseSchema,
+    return UpdateCustomerSchema.parseAsync(body).then((payload) => {
+      return this.#client.post<SuccessResponse>({
+        path: `/customers/${id}/update`,
+        body: payload,
+        schema: SuccessResponseSchema,
+      });
     });
   }
 
@@ -85,10 +90,12 @@ export class Customer {
    * @returns A promise that resolves to the KYC result.
    */
   async kyc(id: string, body: CustomerKycBody): Promise<SuccessResponse> {
-    return this.#client.post<SuccessResponse>({
-      path: `/customers/${id}/kyc`,
-      body: body,
-      schema: SuccessResponseSchema,
+    return CustomerKycSchema.parseAsync(body).then((payload) => {
+      return this.#client.post<SuccessResponse>({
+        path: `/customers/${id}/kyc`,
+        body: payload,
+        schema: SuccessResponseSchema,
+      });
     });
   }
 

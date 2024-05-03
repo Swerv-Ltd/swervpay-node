@@ -84,12 +84,12 @@ export class Collection {
    * @returns A promise that resolves with the created collection data.
    */
   async create(body: CreateCollectionBody): Promise<WalletModel> {
-    const payload = CreateCollectionBodySchema.safeParse(body);
-
-    return this.#client.post<WalletModel>({
-      path: `/collections/`,
-      body: payload,
-      schema: WalletModelSchema,
+    return CreateCollectionBodySchema.parseAsync(body).then((payload) => {
+      return this.#client.post<WalletModel>({
+        path: `/collections/`,
+        body: payload,
+        schema: WalletModelSchema,
+      });
     });
   }
 }

@@ -142,8 +142,7 @@ app.post(
         currency: req.body.currency,
         bank_code: req.body.bank_code,
         account_number: req.body.account_number,
-        naration: req.body.narration,
-        email: req.body.email,
+        narration: req.body.narration,
         reference: req.body.reference,
       });
     });

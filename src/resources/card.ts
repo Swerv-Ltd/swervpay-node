@@ -11,6 +11,9 @@ import {
   PageAndLimitQuery,
   SuccessResponse,
   SuccessResponseSchema,
+  FundOrWithdrawCardSchema,
+  FundOrWithdrawCardResponseSchema,
+  FundOrWithdrawCardResponse,
 } from "../types";
 
 /**
@@ -88,11 +91,12 @@ export class Card {
    * @returns A promise that resolves with the created card data.
    */
   async create(body: CreateCardBody): Promise<CreateCardResponse> {
-    const payload = CreateCardBodySchema.safeParse(body);
-    return this.#client.post<CreateCardResponse>({
-      path: `/cards/`,
-      body: payload,
-      schema: CreateCardResponseSchema,
+    return CreateCardBodySchema.parseAsync(body).then((payload) => {
+      return this.#client.post<CreateCardResponse>({
+        path: `/cards/`,
+        body: payload,
+        schema: CreateCardResponseSchema,
+      });
     });
   }
 
@@ -130,11 +134,13 @@ export class Card {
   async fund(
     id: string,
     body: FundOrWithdrawCardBody
-  ): Promise<SuccessResponse> {
-    return this.#client.post<SuccessResponse>({
-      path: `/cards/${id}/fund`,
-      body: body,
-      schema: SuccessResponseSchema,
+  ): Promise<FundOrWithdrawCardResponse> {
+    return FundOrWithdrawCardSchema.parseAsync(body).then((payload) => {
+      return this.#client.post<FundOrWithdrawCardResponse>({
+        path: `/cards/${id}/fund`,
+        body: payload,
+        schema: FundOrWithdrawCardResponseSchema,
+      });
     });
   }
 
@@ -146,11 +152,13 @@ export class Card {
   async withdraw(
     id: string,
     body: FundOrWithdrawCardBody
-  ): Promise<SuccessResponse> {
-    return this.#client.post<SuccessResponse>({
-      path: `/cards/${id}/withdraw`,
-      body: body,
-      schema: SuccessResponseSchema,
+  ): Promise<FundOrWithdrawCardResponse> {
+    return FundOrWithdrawCardSchema.parseAsync(body).then((payload) => {
+      return this.#client.post<FundOrWithdrawCardResponse>({
+        path: `/cards/${id}/withdraw`,
+        body: payload,
+        schema: FundOrWithdrawCardResponseSchema,
+      });
     });
   }
 }

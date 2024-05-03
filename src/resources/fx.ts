@@ -3,6 +3,7 @@ import {
   ExchangeRateResponse,
   ExchangeRateResponseSchema,
   FxBody,
+  FxBodySchema,
   TransactionModel,
   TransactionModelSchema,
 } from "../types";
@@ -27,10 +28,12 @@ export class Fx {
    * @returns A promise that resolves to the exchange rate.
    */
   async rate(body: FxBody): Promise<ExchangeRateResponse> {
-    return this.#client.post<ExchangeRateResponse>({
-      path: `/fx/rate`,
-      body: body,
-      schema: ExchangeRateResponseSchema,
+    return FxBodySchema.parseAsync(body).then((payload) => {
+      return this.#client.post<ExchangeRateResponse>({
+        path: `/fx/rate`,
+        body: payload,
+        schema: ExchangeRateResponseSchema,
+      });
     });
   }
 
@@ -40,10 +43,12 @@ export class Fx {
    * @returns A promise that resolves to the transaction model.
    */
   async exchange(body: FxBody): Promise<TransactionModel> {
-    return this.#client.post<TransactionModel>({
-      path: `/fx/exchange`,
-      body: body,
-      schema: TransactionModelSchema,
+    return FxBodySchema.parseAsync(body).then((payload) => {
+      return this.#client.post<TransactionModel>({
+        path: `/fx/exchange`,
+        body: payload,
+        schema: TransactionModelSchema,
+      });
     });
   }
 }

@@ -4,6 +4,7 @@ import {
   ResolveAccountBody,
   ResolveAccountModel,
   ResolveAccountModelSchema,
+  ResolveAccountSchema,
 } from "../types";
 
 /**
@@ -39,10 +40,12 @@ export class Other {
   async resolve_account_number(
     body: ResolveAccountBody
   ): Promise<ResolveAccountModel> {
-    return this.#client.post<ResolveAccountModel>({
-      path: `/resolve-account-number`,
-      body: body,
-      schema: ResolveAccountModelSchema,
+    return ResolveAccountSchema.parseAsync(body).then((payload) => {
+      return this.#client.post<ResolveAccountModel>({
+        path: `/resolve-account-number`,
+        body: payload,
+        schema: ResolveAccountModelSchema,
+      });
     });
   }
 }
