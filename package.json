@@ -1,6 +1,6 @@
 {
   "name": "@swervpaydev/sdk",
-  "version": "0.0.13",
+  "version": "0.0.14",
   "description": "Official Swervpay Node.JS SDK",
   "license": "MIT",
   "main": "./dist/index.js",

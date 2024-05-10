@@ -198,6 +198,8 @@ export const CreateCardBodySchema = FundOrWithdrawCardSchema.extend({
   customer_id: z.string().optional(),
   currency: z.enum(["NGN", "USD"]).default("USD"),
   name_on_card: z.string().optional(),
+  expiry_date: z.string().optional(),
+  phone_number: z.string().optional(),
 }).refine(
   (data) => {
     if (data.type !== "LITE") {
