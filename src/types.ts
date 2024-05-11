@@ -142,6 +142,7 @@ export const InformationSchema = z.object({
   state: z.string(),
   country: z.string(),
   postal_code: z.string(),
+  phone_number: z.string(),
 });
 export type Information = z.infer<typeof InformationSchema>;
 
