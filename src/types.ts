@@ -98,6 +98,8 @@ export const TransactionModelSchema = z.object({
   status: z.string(),
   type: z.string(),
   updated_at: z.coerce.date(),
+  collection: WalletModelSchema.optional(),
+  wallet: WalletModelSchema.optional(),
 });
 export type TransactionModel = z.infer<typeof TransactionModelSchema>;
 
