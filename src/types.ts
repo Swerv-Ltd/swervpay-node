@@ -338,12 +338,39 @@ export const CreateCollectionBodySchema = z
     merchant_name: z.string(),
     amount: z.number(),
     type: z.enum(["DEFAULT", "ONE_TIME"]),
+    additional_information: z
+      .object({
+        account_type: z.enum(["INDIVIDUAL"]),
+        utility_bill: z.string(),
+        tax_number: z.string(),
+        bank_statement: z.string(),
+        address: z.object({
+          street: z.string(),
+          city: z.string(),
+          state: z.string(),
+          country: z.enum(["Nigeria"]),
+          zip_code: z.string(),
+        }),
+        document: z.object({
+          expiry_date: z.string(),
+          issue_date: z.string(),
+          number: z.string(),
+          type: z.enum(["PASSPORT", "NIN", "DRIVERS_LICENSE"]),
+          urls: z.array(z.string()),
+        }),
+      })
+      .optional(),
   })
   .refine(
     (data) => {
       if (data.type === "DEFAULT") {
         return data.customer_id !== undefined;
       }
+
+      if (data.currency == "USD") {
+        return data.additional_information !== undefined;
+      }
+
       return true;
     },
     {
@@ -360,3 +387,31 @@ export const FundOrWithdrawCardResponseSchema = SuccessResponseSchema.extend({
 export type FundOrWithdrawCardResponse = z.infer<
   typeof FundOrWithdrawCardResponseSchema
 >;
+
+export const IdentityBvnBodySchema = z.object({
+  number: z.string().length(11),
+});
+export type IdentityBvnBody = z.infer<typeof IdentityBvnBodySchema>;
+
+export const IdentityBvnModelSchema = z.object({
+  bvn: z.string(),
+  date_of_birth: z.string(),
+  email: z.string(),
+  enrollment_bank: z.string(),
+  enrollment_branch: z.string(),
+  first_name: z.string(),
+  gender: z.string(),
+  last_name: z.string(),
+  lga_of_Origin: z.string(),
+  lga_of_residence: z.string(),
+  marital_status: z.string(),
+  middle_name: z.string(),
+  nationality: z.string(),
+  phone_number: z.string(),
+  registration_date: z.string(),
+  residential_address: z.string(),
+  state_of_origin: z.string(),
+  state_of_residence: z.string(),
+  title: z.string(),
+});
+export type IdentityBvnModel = z.infer<typeof IdentityBvnModelSchema>;
