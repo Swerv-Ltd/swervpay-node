@@ -114,6 +114,19 @@ export class Card {
   }
 
   /**
+   * Unfreeze a card by its ID.
+   * @param id - The ID of the card.
+   * @returns A promise that resolves when the card is frozen.
+   */
+  async unfreeze(id: string): Promise<SuccessResponse> {
+    return this.#client.post<SuccessResponse>({
+      path: `/cards/${id}/unfreeze`,
+      body: {},
+      schema: SuccessResponseSchema,
+    });
+  }
+
+  /**
    * Terminates a card by its ID.
    * @param id - The ID of the card.
    * @returns A promise that resolves when the card is terminated.
