@@ -333,6 +333,7 @@ export type CollectionHistoryResponse = z.infer<
 
 export const CreateCollectionBodySchema = z
   .object({
+    reference: z.string().optional(),
     customer_id: z.string().optional(),
     currency: z.enum(["NGN", "USD"]),
     merchant_name: z.string(),
