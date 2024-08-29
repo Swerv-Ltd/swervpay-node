@@ -4,6 +4,8 @@ import { Card } from "./resources/card";
 import { Collection } from "./resources/collection";
 import { Customer } from "./resources/customer";
 import { Fx } from "./resources/fx";
+import { Identity } from "./resources/identity";
+import { Invoice } from "./resources/inovice";
 import { Other } from "./resources/other";
 import { Payout } from "./resources/payout";
 import { Transaction } from "./resources/transaction";
@@ -26,6 +28,8 @@ export class SwervpayClient {
   #webhook: Webhook;
   #business: Business;
   #collection: Collection;
+  #invoice: Invoice;
+  #identity: Identity;
 
   constructor(options: SwervpayClientOption) {
     this.#apiClient = new ApiClient(options);
@@ -40,6 +44,8 @@ export class SwervpayClient {
     this.#webhook = new Webhook(this.#apiClient);
     this.#business = new Business(this.#apiClient);
     this.#collection = new Collection(this.#apiClient);
+    this.#invoice = new Invoice(this.#apiClient);
+    this.#identity = new Identity(this.#apiClient);
   }
 
   /**
@@ -140,5 +146,25 @@ export class SwervpayClient {
 
   get collection(): Collection {
     return this.#collection;
+  }
+
+  /**
+   * Gets the identity.
+   *
+   * @returns The Identity.
+   */
+
+  get identity(): Identity {
+    return this.#identity;
+  }
+
+  /**
+   * Gets the invoice.
+   *
+   * @returns The Invoice.
+   */
+
+  get invoice(): Invoice {
+    return this.#invoice;
   }
 }

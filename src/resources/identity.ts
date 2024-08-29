@@ -7,7 +7,7 @@ import {
 } from "../types";
 
 /**
- * Represents a class for interacting with other resources.
+ * Represents a class for interacting with identity resources.
  */
 export class Identity {
   #client: ApiClient;

@@ -98,6 +98,9 @@ export const TransactionModelSchema = z.object({
   status: z.string(),
   type: z.string(),
   updated_at: z.coerce.date(),
+  payment_method: z.string().optional(),
+  trace_number: z.string().optional(),
+  imad: z.string().optional(),
   collection: WalletModelSchema.optional(),
   wallet: WalletModelSchema.optional(),
 });
@@ -341,6 +344,7 @@ export const CreateCollectionBodySchema = z
     type: z.enum(["DEFAULT", "ONE_TIME"]),
     additional_information: z
       .object({
+        nin: z.string(),
         account_type: z.enum(["INDIVIDUAL"]),
         utility_bill: z.string(),
         tax_number: z.string(),
