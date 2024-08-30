@@ -345,6 +345,7 @@ export const CreateCollectionBodySchema = z
     additional_information: z
       .object({
         nin: z.string(),
+        date_of_birth: z.string(),
         account_type: z.enum(["INDIVIDUAL"]),
         utility_bill: z.string(),
         tax_number: z.string(),
