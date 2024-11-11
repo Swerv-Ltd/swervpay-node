@@ -155,6 +155,9 @@ export class ApiClient {
     };
 
     const response = await fetch(`${this.#apiUrl}${options.path}`, {
+      signal: this.#options.timeout
+        ? AbortSignal.timeout(this.#options.timeout)
+        : undefined,
       method: options.method,
       headers: fullHeaders,
       body:

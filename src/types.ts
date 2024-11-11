@@ -8,7 +8,7 @@ const SwervpayClientOption = z.object({
   businessId: z.string(),
   secretKey: z.string(),
   sandbox: z.boolean().default(false).optional(),
-  timeout: z.number().default(30000).optional(),
+  timeout: z.number().optional(),
   version: z.string().default("v1").optional(),
   baseUrl: z.string().default("https://api.swervpay.co/api/").optional(),
   logLevel: LogLevel.optional(),
@@ -140,15 +140,46 @@ export const CreateCustomerSchema = z.object({
 });
 export type CreateCustomerBody = z.infer<typeof CreateCustomerSchema>;
 
-export const InformationSchema = z.object({
-  address: z.string(),
-  city: z.string(),
-  bvn: z.string(),
-  state: z.string(),
-  country: z.string(),
-  postal_code: z.string(),
-  phone_number: z.string(),
-});
+export const InformationSchema = z
+  .object({
+    address: z.string(),
+    city: z.string(),
+    bvn: z.string().optional(),
+    ssnit: z.string().optional(),
+    state: z.string(),
+    country: z.enum(["Nigeria", "Ghana"]),
+    postal_code: z.string(),
+    phone_number: z.string(),
+    date_of_birth: z.string(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.bvn == undefined || data.ssnit == undefined) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "bvn or ssnit is required",
+      });
+
+      return z.NEVER;
+    }
+
+    if (data.country === "Nigeria" && data.bvn === undefined) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "bvn is required",
+      });
+
+      return z.NEVER;
+    }
+
+    if (data.country === "Ghana" && data.ssnit === undefined) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "ssnit is required",
+      });
+
+      return z.NEVER;
+    }
+  });
 export type Information = z.infer<typeof InformationSchema>;
 
 export const DocumentSchema = z.object({
@@ -165,19 +196,35 @@ export const CustomerKycSchema = z
     document: DocumentSchema.optional(),
     information: InformationSchema.optional(),
   })
-  .refine((data) => {
-    if (data.tier === "FULL") {
-      return data.information !== undefined && data.document !== undefined;
+  .superRefine((data, ctx) => {
+    if (
+      data.tier === "FULL" &&
+      data.information == undefined &&
+      data.document == undefined
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "document and information is required for full kyc",
+      });
+
+      return z.NEVER;
     }
 
-    if (data.tier === "TWO") {
-      return data.document !== undefined;
+    if (data.tier === "TWO" && data.document == undefined) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "document is required for tier two kyc",
+      });
+      return z.NEVER;
     }
 
-    if (data.tier === "ONE") {
-      return data.information !== undefined;
+    if (data.tier === "ONE" && data.information == undefined) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "information is required for tier one kyc",
+      });
+      return z.NEVER;
     }
-    return true;
   });
 export type CustomerKycBody = z.infer<typeof CustomerKycSchema>;
 
