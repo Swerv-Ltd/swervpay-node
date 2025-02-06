@@ -499,3 +499,86 @@ export const IdentityBvnModelSchema = z.object({
   title: z.string(),
 });
 export type IdentityBvnModel = z.infer<typeof IdentityBvnModelSchema>;
+
+export const BillCategorySchema = z.object({
+  name: z.string(),
+});
+
+export type BillCategory = z.infer<typeof BillCategorySchema>;
+
+export const BillCategoriesSchema = z.array(BillCategorySchema);
+
+export type BillCategories = z.infer<typeof BillCategoriesSchema>;
+
+export const BillCategoryListSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+});
+
+export type BillCategoryList = z.infer<typeof BillCategoryListSchema>;
+
+export const BillCategoryListsSchema = z.array(BillCategoryListSchema);
+
+export type BillCategoryLists = z.infer<typeof BillCategoryListsSchema>;
+
+export const BillCategoryListItemSchema = z.object({
+  id: z.string(),
+  name: z.string(),
+  code: z.string(),
+  currency: z.string(),
+  fee: z.number().optional(),
+  amount: z.number().optional(),
+});
+
+export type BillCategoryListItem = z.infer<typeof BillCategoryListItemSchema>;
+
+export const BillCategoryListItemsSchema = z.array(BillCategoryListItemSchema);
+
+export type BillCategoryListItems = z.infer<typeof BillCategoryListItemsSchema>;
+
+export const BillValidateCustomerBodySchema = z.object({
+  biller_id: z.string(),
+  customer_id: z.string(),
+  category: z.string(),
+});
+
+export type BillValidateCustomerBody = z.infer<
+  typeof BillValidateCustomerBodySchema
+>;
+
+export const BillCreateBodySchema = z.object({
+  biller_id: z.string(),
+  customer_id: z.string(),
+  category: z.string(),
+  item_id: z.string(),
+  reference: z.string().optional(),
+  amount: z.number(),
+});
+
+export type BillCreateBody = z.infer<typeof BillCreateBodySchema>;
+
+export const BillTransactionSchema = z.object({
+  amount: z.number(),
+  bill: z.object({
+    bill_code: z.string(),
+    bill_name: z.string(),
+    item_code: z.string(),
+    name: z.string(),
+    token: z.string().optional(),
+  }),
+  category: z.string(),
+  charges: z.number(),
+  created_at: z.coerce.date(),
+  detail: z.string(),
+  fiat_rate: z.number(),
+  id: z.string(),
+  payment_method: z.string(),
+  reference: z.string(),
+  report: z.boolean(),
+  report_message: z.string(),
+  status: z.string(),
+  type: z.string(),
+  updated_at: z.coerce.date(),
+});
+
+export type BillTransaction = z.infer<typeof BillTransactionSchema>;

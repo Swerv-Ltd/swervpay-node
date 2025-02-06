@@ -1,4 +1,5 @@
 import { ApiClient } from "./apiClient";
+import { Bill } from "./resources/bill";
 import { Business } from "./resources/business";
 import { Card } from "./resources/card";
 import { Collection } from "./resources/collection";
@@ -30,6 +31,7 @@ export class SwervpayClient {
   #collection: Collection;
   #invoice: Invoice;
   #identity: Identity;
+  #bill: Bill;
 
   constructor(options: SwervpayClientOption) {
     this.#apiClient = new ApiClient(options);
@@ -46,6 +48,7 @@ export class SwervpayClient {
     this.#collection = new Collection(this.#apiClient);
     this.#invoice = new Invoice(this.#apiClient);
     this.#identity = new Identity(this.#apiClient);
+    this.#bill = new Bill(this.#apiClient);
   }
 
   /**
@@ -166,5 +169,14 @@ export class SwervpayClient {
 
   get invoice(): Invoice {
     return this.#invoice;
+  }
+
+  /**
+   * Gets the bill.
+   *
+   * @returns The Bill.
+   */
+  get bill(): Bill {
+    return this.#bill;
   }
 }
