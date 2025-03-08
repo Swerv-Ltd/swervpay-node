@@ -502,6 +502,7 @@ export type IdentityBvnModel = z.infer<typeof IdentityBvnModelSchema>;
 
 export const BillCategorySchema = z.object({
   name: z.string(),
+  id: z.string(),
 });
 
 export type BillCategory = z.infer<typeof BillCategorySchema>;
@@ -538,6 +539,7 @@ export type BillCategoryListItems = z.infer<typeof BillCategoryListItemsSchema>;
 
 export const BillValidateCustomerBodySchema = z.object({
   biller_id: z.string(),
+  item_id: z.string(),
   customer_id: z.string(),
   category: z.string(),
 });
