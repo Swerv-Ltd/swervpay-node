@@ -253,6 +253,12 @@ export const CreateCardBodySchema = FundOrWithdrawCardSchema.extend({
   name_on_card: z.string().optional(),
   expiry_date: z.string().optional(),
   phone_number: z.string().optional(),
+  document: z
+    .object({
+      document_type: z.string(),
+      document_number: z.string(),
+    })
+    .optional(),
 }).refine(
   (data) => {
     if (data.type !== "LITE") {
