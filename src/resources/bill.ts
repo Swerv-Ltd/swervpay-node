@@ -14,6 +14,8 @@ import {
   BillCreateBodySchema,
   BillTransaction,
   BillTransactionSchema,
+  CreateBillTransactionSchema,
+  CreateBillTransaction,
 } from "../types";
 
 /**
@@ -94,12 +96,12 @@ export class Bill {
    * @param payload - The bill payment details.
    * @returns A promise that resolves with the created bill transaction.
    */
-  async create(payload: BillCreateBody): Promise<BillTransaction> {
+  async create(payload: BillCreateBody): Promise<CreateBillTransaction> {
     return BillCreateBodySchema.parseAsync(payload).then((value) => {
-      return this.#client.post<BillTransaction>({
+      return this.#client.post<CreateBillTransaction>({
         path: `/bills`,
         body: value,
-        schema: BillTransactionSchema,
+        schema: CreateBillTransactionSchema,
       });
     });
   }
