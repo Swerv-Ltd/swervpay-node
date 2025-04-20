@@ -566,27 +566,29 @@ export const BillCreateBodySchema = z.object({
 export type BillCreateBody = z.infer<typeof BillCreateBodySchema>;
 
 export const BillTransactionSchema = z.object({
-  amount: z.number(),
-  bill: z.object({
-    bill_code: z.string(),
-    bill_name: z.string(),
-    item_code: z.string(),
-    name: z.string(),
-    token: z.string().optional(),
+  transaction: z.object({
+    amount: z.number(),
+    bill: z.object({
+      bill_code: z.string(),
+      bill_name: z.string(),
+      item_code: z.string(),
+      name: z.string(),
+      token: z.string().optional(),
+    }),
+    category: z.string(),
+    charges: z.number(),
+    created_at: z.coerce.date(),
+    detail: z.string(),
+    fiat_rate: z.number(),
+    id: z.string(),
+    payment_method: z.string(),
+    reference: z.string(),
+    report: z.boolean(),
+    report_message: z.string(),
+    status: z.string(),
+    type: z.string(),
+    updated_at: z.coerce.date(),
   }),
-  category: z.string(),
-  charges: z.number(),
-  created_at: z.coerce.date(),
-  detail: z.string(),
-  fiat_rate: z.number(),
-  id: z.string(),
-  payment_method: z.string(),
-  reference: z.string(),
-  report: z.boolean(),
-  report_message: z.string(),
-  status: z.string(),
-  type: z.string(),
-  updated_at: z.coerce.date(),
 });
 
 export type BillTransaction = z.infer<typeof BillTransactionSchema>;
