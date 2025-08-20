@@ -54,6 +54,7 @@ export const CardModelSchema = z.object({
   total_funded: z.number(),
   type: z.string(),
   updated_at: z.coerce.date(),
+  encrypted_details: z.string().optional(),
 });
 
 export type CardModel = z.infer<typeof CardModelSchema>;
