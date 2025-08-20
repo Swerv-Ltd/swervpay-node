@@ -366,6 +366,8 @@ export const CardTransactionResponseSchema = z.object({
   reference: z.string(),
   report: z.string(),
   report_message: z.string(),
+  balance_before: z.coerce.number().nullable().optional(),
+  balance_after: z.coerce.number().nullable().optional(),
   status: z.string(),
   type: z.string(),
   updated_at: z.string(),
