@@ -2,6 +2,7 @@ import { ApiClient } from "./apiClient";
 import { Bill } from "./resources/bill";
 import { Business } from "./resources/business";
 import { Card } from "./resources/card";
+import { Checkout } from "./resources/checkout";
 import { Collection } from "./resources/collection";
 import { Customer } from "./resources/customer";
 import { Fx } from "./resources/fx";
@@ -20,6 +21,7 @@ import { SwervpayClientOption } from "./types";
 export class SwervpayClient {
   #apiClient: ApiClient;
   #card: Card;
+  #checkout: Checkout;
   #customer: Customer;
   #transaction: Transaction;
   #payout: Payout;
@@ -37,6 +39,7 @@ export class SwervpayClient {
     this.#apiClient = new ApiClient(options);
 
     this.#card = new Card(this.#apiClient);
+    this.#checkout = new Checkout(this.#apiClient);
     this.#customer = new Customer(this.#apiClient);
     this.#transaction = new Transaction(this.#apiClient);
     this.#payout = new Payout(this.#apiClient);
@@ -76,6 +79,15 @@ export class SwervpayClient {
    */
   get card(): Card {
     return this.#card;
+  }
+
+  /**
+   * Gets the checkout resource.
+   *
+   * @returns The Checkout resource.
+   */
+  get checkout(): Checkout {
+    return this.#checkout;
   }
 
   /**

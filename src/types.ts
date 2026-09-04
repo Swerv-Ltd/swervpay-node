@@ -70,6 +70,7 @@ export const WalletModelSchema = z.object({
   bank_name: z.string(),
   created_at: z.coerce.date(),
   customer_id: z.string(),
+  currency: z.string().optional(),
   id: z.string(),
   label: z.string(),
   pending_balance: z.number(),
@@ -99,6 +100,7 @@ export const TransactionModelSchema = z.object({
   status: z.string(),
   type: z.string(),
   updated_at: z.coerce.date(),
+  currency: z.string().optional(),
   payment_method: z.string().optional(),
   trace_number: z.string().optional(),
   imad: z.string().optional(),
@@ -348,6 +350,183 @@ export const CreatePayoutResponseSchema = z.object({
   id: z.string(),
 });
 export type CreatePayoutResponse = z.infer<typeof CreatePayoutResponseSchema>;
+
+export const SetCardPinBodySchema = z.object({
+  pin: z.string(),
+});
+export type SetCardPinBody = z.infer<typeof SetCardPinBodySchema>;
+
+export const CreditWalletSenderSchema = z.object({
+  account_name: z.string().optional(),
+  account_number: z.string().optional(),
+  bank_code: z.string().optional(),
+  bank_name: z.string().optional(),
+  narration: z.string().optional(),
+  reference: z.string().optional(),
+});
+export type CreditWalletSender = z.infer<typeof CreditWalletSenderSchema>;
+
+export const CreditWalletBodySchema = z.object({
+  amount: z.number(),
+  sender: CreditWalletSenderSchema.optional(),
+});
+export type CreditWalletBody = z.infer<typeof CreditWalletBodySchema>;
+
+export const InvoiceItemSchema = z.object({
+  created_at: z.coerce.date(),
+  description: z.string(),
+  discount_amount: z.number(),
+  id: z.string(),
+  quantity: z.number().int(),
+  tax: z.string(),
+  tax_fee: z.number(),
+  total_price: z.number(),
+  unit_price: z.number(),
+  updated_at: z.coerce.date(),
+});
+export type InvoiceItem = z.infer<typeof InvoiceItemSchema>;
+
+export const InvoiceModelSchema = z.object({
+  attachments: z.string(),
+  categories: z.string(),
+  created_at: z.coerce.date(),
+  currency: z.string(),
+  description: z.string(),
+  due_date: z.string(),
+  id: z.string(),
+  invoice_link: z.string(),
+  invoice_number: z.string(),
+  is_recurring: z.boolean(),
+  issued_date: z.string(),
+  items: z.array(InvoiceItemSchema),
+  memo: z.string(),
+  recurring_end_date: z.string(),
+  recurring_frequency: z.string(),
+  status: z.string(),
+  tags: z.string(),
+  title: z.string(),
+  total_amount: z.number(),
+  total_discount_amount: z.number(),
+  total_tax_fee: z.number(),
+  updated_at: z.coerce.date(),
+});
+export type InvoiceModel = z.infer<typeof InvoiceModelSchema>;
+
+export const CreateInvoiceItemSchema = z.object({
+  description: z.string(),
+  discount: z.number().optional(),
+  id: z.string().optional(),
+  quantity: z.number().int(),
+  tax: z.string().optional(),
+  tax_fee: z.number().optional(),
+  unit_price: z.number(),
+});
+export type CreateInvoiceItem = z.infer<typeof CreateInvoiceItemSchema>;
+
+const InvoiceDateSchema = z.union([z.string(), z.date()]).transform((value) =>
+  value instanceof Date ? value.toISOString() : value
+);
+
+export const CreateInvoiceBodySchema = z.object({
+  categories: z.array(z.string()).nullable().optional(),
+  cc: z.array(z.string()).nullable().optional(),
+  currency: z.string(),
+  customer_billing_address_id: z.string(),
+  customer_id: z.string(),
+  description: z.string(),
+  due_date: InvoiceDateSchema,
+  is_recurring: z.boolean(),
+  issue_date: InvoiceDateSchema,
+  items: z.array(CreateInvoiceItemSchema).nullable().optional(),
+  memo: z.string(),
+  recurring: z.string(),
+  status: z.string(),
+  tags: z.array(z.string()).nullable().optional(),
+  title: z.string(),
+});
+export type CreateInvoiceBody = z.infer<typeof CreateInvoiceBodySchema>;
+
+export const UpdateInvoiceBodySchema = CreateInvoiceBodySchema.partial();
+export type UpdateInvoiceBody = z.infer<typeof UpdateInvoiceBodySchema>;
+
+export const WebhookEventSchema = z.enum([
+  "bill.completed",
+  "bill.failed",
+  "bill.processed",
+  "card.authorization",
+  "card.charges",
+  "card.contactless.activation",
+  "card.created",
+  "card.created.failed",
+  "card.freezed",
+  "card.terminated",
+  "card.transaction",
+  "card.unfreezed",
+  "card.updated",
+  "checkout.completed",
+  "checkout.failed",
+  "collection.completed",
+  "collection.created",
+  "collection.created.failed",
+  "collection.failed",
+  "collection.notification",
+  "collection.updated",
+  "customer.created",
+  "customer.kyc.updated",
+  "customer.updated",
+  "payout.completed",
+  "payout.failed",
+  "payout.processed",
+  "payout.processing",
+  "payout.reversed",
+  "wallet.created",
+  "wallet.updated",
+]);
+export type WebhookEvent = z.infer<typeof WebhookEventSchema>;
+
+export const CreateWebhookBodySchema = z.object({
+  description: z.string(),
+  events: z.array(WebhookEventSchema),
+  url: z.string(),
+});
+export type CreateWebhookBody = z.infer<typeof CreateWebhookBodySchema>;
+
+export const UpdateWebhookBodySchema = CreateWebhookBodySchema.partial();
+export type UpdateWebhookBody = z.infer<typeof UpdateWebhookBodySchema>;
+
+export const WebhookModelSchema = z.object({
+  created_at: z.coerce.date(),
+  description: z.string(),
+  endpoint_url: z.string(),
+  events: z.string(),
+  id: z.string(),
+  signing_key: z.string(),
+  status: z.string(),
+  updated_at: z.coerce.date(),
+});
+export type WebhookModel = z.infer<typeof WebhookModelSchema>;
+
+export const WebhookLogModelSchema = z.object({
+  business_webhook_id: z.string(),
+  created_at: z.coerce.date(),
+  event: WebhookEventSchema,
+  id: z.string(),
+  request_body: z.string(),
+  response_body: z.string(),
+  response_status_code: z.string(),
+  status: z.string(),
+  updated_at: z.coerce.date(),
+});
+export type WebhookLogModel = z.infer<typeof WebhookLogModelSchema>;
+
+export const WebhookLogsQuerySchema = z.object({
+  page: z.number().optional(),
+  limit: z.number().optional(),
+  status: z.string().optional(),
+  event: z.string().optional(),
+  webhook_id: z.string().optional(),
+});
+export type WebhookLogsQuery = z.infer<typeof WebhookLogsQuerySchema>;
 
 export const CardTransactionResponseSchema = z.object({
   amount: z.string(),

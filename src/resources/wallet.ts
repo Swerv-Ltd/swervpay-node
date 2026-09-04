@@ -1,5 +1,13 @@
 import { ApiClient } from "../apiClient";
-import { PageAndLimitQuery, WalletModel, WalletModelSchema } from "../types";
+import {
+  CreatePayoutResponse,
+  CreatePayoutResponseSchema,
+  CreditWalletBody,
+  CreditWalletBodySchema,
+  PageAndLimitQuery,
+  WalletModel,
+  WalletModelSchema,
+} from "../types";
 
 /**
  * Represents a Wallet resource.
@@ -37,6 +45,26 @@ export class Wallet {
     return this.#client.get<WalletModel[]>({
       path: `/wallets`,
       query: query,
+    });
+  }
+
+  /**
+   * Simulates a credit transaction for a wallet. This endpoint is available
+   * in the sandbox environment only.
+   * @param id - The ID of the wallet.
+   * @param body - The credit transaction details.
+   * @returns A promise that resolves to the created transaction reference.
+   */
+  async credit(
+    id: string,
+    body: CreditWalletBody
+  ): Promise<CreatePayoutResponse> {
+    return CreditWalletBodySchema.parseAsync(body).then((payload) => {
+      return this.#client.post<CreatePayoutResponse>({
+        path: `/wallets/${id}/credit`,
+        body: payload,
+        schema: CreatePayoutResponseSchema,
+      });
     });
   }
 }

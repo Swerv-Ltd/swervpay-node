@@ -14,6 +14,8 @@ import {
   FundOrWithdrawCardSchema,
   FundOrWithdrawCardResponseSchema,
   FundOrWithdrawCardResponse,
+  SetCardPinBody,
+  SetCardPinBodySchema,
 } from "../types";
 
 /**
@@ -134,6 +136,35 @@ export class Card {
   async terminate(id: string): Promise<SuccessResponse> {
     return this.#client.post<SuccessResponse>({
       path: `/cards/${id}/terminate`,
+      body: {},
+      schema: SuccessResponseSchema,
+    });
+  }
+
+  /**
+   * Sets or updates the PIN for an NGN Verve card.
+   * @param id - The ID of the card.
+   * @param body - The card PIN.
+   * @returns A promise that resolves when the PIN is updated.
+   */
+  async pin(id: string, body: SetCardPinBody): Promise<SuccessResponse> {
+    return SetCardPinBodySchema.parseAsync(body).then((payload) => {
+      return this.#client.patch<SuccessResponse>({
+        path: `/cards/${id}/pin`,
+        body: payload,
+        schema: SuccessResponseSchema,
+      });
+    });
+  }
+
+  /**
+   * Regularizes a card by its ID.
+   * @param id - The ID of the card.
+   * @returns A promise that resolves when the card is regularized.
+   */
+  async regularize(id: string): Promise<SuccessResponse> {
+    return this.#client.post<SuccessResponse>({
+      path: `/cards/${id}/regularize`,
       body: {},
       schema: SuccessResponseSchema,
     });

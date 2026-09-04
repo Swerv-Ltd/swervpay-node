@@ -113,6 +113,25 @@ export class ApiClient {
     );
   }
 
+  async patch<T = any>(options: {
+    path: string;
+    body: any;
+    schema?: z.ZodType<T>;
+  }): Promise<T> {
+    return this.#handleUnauthorized<T>(
+      () => {
+        return this.#request({
+          method: "PATCH",
+          path: options.path,
+          body: options.body,
+        });
+      },
+      {
+        schema: options.schema,
+      }
+    );
+  }
+
   async delete<T = any>(options: {
     path: string;
     body: any;
@@ -133,7 +152,7 @@ export class ApiClient {
   }
 
   async #request(options: {
-    method: "POST" | "GET" | "PUT" | "DELETE" | "HEAD";
+    method: "POST" | "GET" | "PUT" | "PATCH" | "DELETE" | "HEAD";
     path: string;
     body: any;
     headers?: any;

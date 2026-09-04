@@ -1,5 +1,18 @@
 import { ApiClient } from "../apiClient";
-import { SuccessResponse, SuccessResponseSchema } from "../types";
+import {
+  CreateWebhookBody,
+  CreateWebhookBodySchema,
+  SuccessResponse,
+  SuccessResponseSchema,
+  UpdateWebhookBody,
+  UpdateWebhookBodySchema,
+  WebhookLogModel,
+  WebhookLogModelSchema,
+  WebhookLogsQuery,
+  WebhookLogsQuerySchema,
+  WebhookModel,
+  WebhookModelSchema,
+} from "../types";
 
 /**
  * Represents a Webhook resource.
@@ -16,13 +29,62 @@ export class Webhook {
   }
 
   /**
+   * Creates a webhook.
+   * @param body - The webhook URL, description, and subscribed events.
+   * @returns A promise that resolves to the created webhook.
+   */
+  async create(body: CreateWebhookBody): Promise<WebhookModel> {
+    return CreateWebhookBodySchema.parseAsync(body).then((payload) => {
+      return this.#client.post<WebhookModel>({
+        path: `/webhook`,
+        body: payload,
+        schema: WebhookModelSchema,
+      });
+    });
+  }
+
+  /**
+   * Lists webhook delivery logs.
+   * @param query - Optional pagination and filter parameters.
+   * @returns A promise that resolves to the webhook logs.
+   */
+  async logs(query: WebhookLogsQuery = {}): Promise<WebhookLogModel[]> {
+    return WebhookLogsQuerySchema.parseAsync(query).then((value) => {
+      return this.#client.get<WebhookLogModel[]>({
+        path: `/webhook/logs`,
+        query: value,
+        schema: WebhookLogModelSchema.array(),
+      });
+    });
+  }
+
+  /**
+   * Updates a webhook.
+   * @param id - The ID of the webhook.
+   * @param body - The webhook fields to update.
+   * @returns A promise that resolves when the webhook is updated.
+   */
+  async update(
+    id: string,
+    body: UpdateWebhookBody
+  ): Promise<SuccessResponse> {
+    return UpdateWebhookBodySchema.parseAsync(body).then((payload) => {
+      return this.#client.put<SuccessResponse>({
+        path: `/webhook/${id}`,
+        body: payload,
+        schema: SuccessResponseSchema,
+      });
+    });
+  }
+
+  /**
    * Tests the webhook with the specified ID.
    * @param id The ID of the webhook to test.
    * @returns A promise that resolves to a SuccessResponse object.
    */
   async test(id: string): Promise<SuccessResponse> {
     return this.#client.post<SuccessResponse>({
-      path: `/webhooks/${id}/test`,
+      path: `/webhook/${id}/test`,
       body: {},
       schema: SuccessResponseSchema,
     });
@@ -35,7 +97,7 @@ export class Webhook {
    */
   async retry(id: string): Promise<SuccessResponse> {
     return this.#client.post<SuccessResponse>({
-      path: `/webhooks/${id}/retry`,
+      path: `/webhook/log/${id}/retry`,
       body: {},
       schema: SuccessResponseSchema,
     });

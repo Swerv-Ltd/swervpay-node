@@ -7,6 +7,10 @@ import {
   PageAndLimitQuery,
   WalletModel,
   WalletModelSchema,
+  CreatePayoutResponse,
+  CreatePayoutResponseSchema,
+  CreditWalletBody,
+  CreditWalletBodySchema,
 } from "../types";
 
 /**
@@ -89,6 +93,26 @@ export class Collection {
         path: `/collections/`,
         body: payload,
         schema: WalletModelSchema,
+      });
+    });
+  }
+
+  /**
+   * Simulates a credit transaction for a collection. This endpoint is
+   * available in the sandbox environment only.
+   * @param id - The ID of the collection.
+   * @param body - The credit transaction details.
+   * @returns A promise that resolves to the created transaction reference.
+   */
+  async credit(
+    id: string,
+    body: CreditWalletBody
+  ): Promise<CreatePayoutResponse> {
+    return CreditWalletBodySchema.parseAsync(body).then((payload) => {
+      return this.#client.post<CreatePayoutResponse>({
+        path: `/collections/${id}/credit`,
+        body: payload,
+        schema: CreatePayoutResponseSchema,
       });
     });
   }

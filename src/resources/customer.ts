@@ -111,4 +111,17 @@ export class Customer {
       schema: SuccessResponseSchema,
     });
   }
+
+  /**
+   * Deletes a customer.
+   * @param id - The ID of the customer to delete.
+   * @returns A promise that resolves when the customer is deleted.
+   */
+  async delete(id: string): Promise<SuccessResponse> {
+    return this.#client.delete<SuccessResponse>({
+      path: `/customers/${id}`,
+      body: {},
+      schema: SuccessResponseSchema,
+    });
+  }
 }
